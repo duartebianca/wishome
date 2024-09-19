@@ -13,17 +13,10 @@ model User {
   id        Int      @id @default(autoincrement())
   email     String   @unique
   password  String
-  role      Role     // Define if it is 'GIFTER' or 'WISHMAKER'
+  role      String   // Use a string to define the role (e.g., 'GIFTER' or 'WISHMAKER')
   createdAt DateTime @default(now())
   
-  // Relationship with the gifts purchased or that they are "thinking" about
   giftStatus GiftStatus[]
-}
-
-// Definition of roles to differentiate between Gifter and Wishmaker
-enum Role {
-  GIFTER
-  WISHMAKER
 }
 
 // Schema for the Gift List
@@ -35,24 +28,16 @@ model Gift {
   imageUrl  String?  // Image URL of the gift
   status    GiftStatus[]  // Status of the gift (available, purchased, thinking)
 
-  // Timestamps
   createdAt DateTime @default(now())
 }
 
 // Status of a gift (purchased, thinking, etc.)
 model GiftStatus {
   id        Int      @id @default(autoincrement())
-  status    Status   // Define if it is 'PURCHASED', 'THINKING', or 'AVAILABLE'
+  status    String   // Use a string for gift status (e.g., 'AVAILABLE', 'PURCHASED', 'THINKING')
   gift      Gift     @relation(fields: [giftId], references: [id])
   giftId    Int
   user      User     @relation(fields: [userId], references: [id])
   userId    Int
   updatedAt DateTime @updatedAt
-}
-
-// Enum for the statuses of gifts
-enum Status {
-  AVAILABLE
-  PURCHASED
-  THINKING
 }
