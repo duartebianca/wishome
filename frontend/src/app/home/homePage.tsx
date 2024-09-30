@@ -1,33 +1,75 @@
-import React, { useEffect, useState } from 'react';
+import { Box, Flex, Text, Image } from "@chakra-ui/react";
+import NavBar from "../../shared/components/nav-bar";
 
-const HomePage: React.FC = () => {
-  const [gifts, setGifts] = useState<any[]>([]);
-
-  useEffect(() => {
-    const fetchGifts = async () => {
-      try {
-        const response = await fetch("http://localhost:5000/api/gifts");
-        const data = await response.json();
-        setGifts(data);
-      } catch (error) {
-        console.error("Error fetching gifts:", error);
-      }
-    };
-
-    fetchGifts();
-  }, []);
-
+const HomePage = () => {
   return (
-    <div>
-      <h1>Welcome to Wishome!</h1>
-      <p>Your personalized gift registry.</p>
-      <h2>Available Gifts:</h2>
-      <ul>
-        {gifts.map(gift => (
-          <li key={gift.id}>{gift.name} - ${gift.price}</li>
-        ))}
-      </ul>
-    </div>
+    <Box
+      backgroundImage="url('/background.png')"
+      backgroundSize="cover"
+      backgroundPosition="center"
+      minHeight="100vh"
+    >
+      <NavBar />
+      <Flex
+        direction={{ base: "column", md: "row" }}
+        alignItems="center"
+        justifyContent="center"
+        gap="6rem"
+        padding="3rem"
+      >
+        {/* Imagem à esquerda */}
+        <Image
+          src="/house3d.png"
+          alt="3D House"
+          height={"380px"}
+          width={"auto"}
+        />
+
+        {/* Texto à direita */}
+        <Box textAlign={{ base: "center", md: "left" }} maxWidth="600px">
+          <Image
+            ml={-7}
+            src="boasvindas.png"
+            alt="welcome title"
+            height={40}
+            width={"auto"}
+            mb={-5}
+          />
+          <Text
+            margin-top="-10rem"
+            fontSize="xl"
+            fontFamily="'Lato', sans-serif"
+            fontWeight={"bold"}
+            marginBottom="1rem"
+            color="#b16831"
+          >
+            Agradecemos o seu interesse em nos presentear! Para sua comodidade,
+            vamos pedir que crie uma conta rapidinho! Só vamos precisar do seu
+            nome, email, telefone e que você escolha uma senha ;)
+          </Text>
+          <Text
+            fontSize="xl"
+            fontFamily="'Lato', sans-serif"
+            fontWeight={400}
+            marginBottom="2rem"
+            color="#b16831"
+          >
+            Você pode comprar na loja da sua preferência ou nos enviar um pix
+            (no valor do presente ou da sua escolha).
+            <br />
+            Qualquer dúvida, só falar com a gente!
+          </Text>
+          <Box
+            display="flex"
+            gap={6}
+            justifyContent={{ base: "center", md: "flex-start" }}
+          >
+            <Text fontFamily="'Lato', sans-serif">Duda ❤️</Text>
+            <Text fontFamily="'Lato', sans-serif">Gustavo ✍️</Text>
+          </Box>
+        </Box>
+      </Flex>
+    </Box>
   );
 };
 
