@@ -1,4 +1,4 @@
-import { Box, Flex, Text, Image } from "@chakra-ui/react";
+import { Box, Flex, Text, Image, Heading } from "@chakra-ui/react";
 import NavBar from "../../shared/components/nav-bar";
 
 const HomePage = () => {
@@ -27,18 +27,17 @@ const HomePage = () => {
 
         {/* Texto à direita */}
         <Box textAlign={{ base: "center", md: "left" }} maxWidth="600px">
-          <Image
-            ml={-7}
-            src="boasvindas.png"
-            alt="welcome title"
-            height={40}
-            width={"auto"}
-            mb={-5}
-          />
+          <Heading
+            fontFamily="'Higuen Elegant Serif', serif"
+            color="#6d1716"
+            fontSize={70}
+            mb={5}
+          >
+            Boas-vindas!
+          </Heading>
           <Text
-            margin-top="-10rem"
             fontSize="xl"
-            fontFamily="'Lato', sans-serif"
+            fontFamily="'LWSato', sans-serif"
             fontWeight={"bold"}
             marginBottom="1rem"
             color="#b16831"
