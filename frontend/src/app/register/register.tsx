@@ -12,9 +12,11 @@ import {
   SimpleGrid,
   List,
   ListItem,
+  HStack,
 } from "@chakra-ui/react";
 import NavBar from "../../shared/components/nav-bar";
 import { RegisterFormInputs, RegisterSchema } from "./forms/register-form";
+import { CheckCircleIcon, SmallCloseIcon } from "@chakra-ui/icons";
 
 const SignUpPage = () => {
   const {
@@ -25,7 +27,7 @@ const SignUpPage = () => {
     formState: { errors },
   } = useForm<RegisterFormInputs>({
     resolver: zodResolver(RegisterSchema),
-    mode: "onChange", // Validações ocorrerão conforme o campo muda
+    mode: "onChange",
   });
 
   const password = watch("password", "");
@@ -54,6 +56,17 @@ const SignUpPage = () => {
     // Lógica de envio do formulário aqui
   };
 
+  const renderRequirement = (isMet: boolean, label: string) => (
+    <HStack>
+      {isMet ? (
+        <CheckCircleIcon color="green.500" />
+      ) : (
+        <SmallCloseIcon color="red.500" />
+      )}
+      <Text>{label}</Text>
+    </HStack>
+  );
+
   return (
     <Box
       backgroundImage="url('/background.png')"
@@ -75,6 +88,7 @@ const SignUpPage = () => {
           borderRadius="lg"
           boxShadow="md"
           width={{ base: "90%", md: "600px" }}
+          maxWidth="800px"
         >
           <Text
             as="h2"
@@ -89,13 +103,13 @@ const SignUpPage = () => {
 
           {/* Formulário */}
           <form onSubmit={handleSubmit(onSubmit)}>
-            <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
-              <FormControl isInvalid={!!errors.name}>
+            <SimpleGrid columns={2} spacing={4}>
+              <FormControl isInvalid={!!errors.name} gridColumn="span 2">
                 <FormLabel
                   color="#b16831"
                   fontFamily="'Higuen Elegant Serif', serif"
                 >
-                  Nome
+                  Nome e sobrenome
                 </FormLabel>
                 <Input
                   type="text"
@@ -128,70 +142,6 @@ const SignUpPage = () => {
                 )}
               </FormControl>
 
-              <FormControl isInvalid={!!errors.password}>
-                <FormLabel
-                  color="#b16831"
-                  fontFamily="'Higuen Elegant Serif', serif"
-                >
-                  Senha
-                </FormLabel>
-                <Input
-                  type="password"
-                  borderColor="#b16831"
-                  focusBorderColor="#b16831"
-                  {...register("password")}
-                  onChange={(e) => {
-                    updateRequirements(e.target.value);
-                    handleFieldChange("password");
-                  }} // Monitora mudanças
-                />
-                {errors.password && (
-                  <Text color="red.500">{errors.password.message}</Text>
-                )}
-                {/* Requisitos de Senha */}
-                <Box mt="2">
-                  <Text fontWeight="bold">A senha deve conter:</Text>
-                  <List spacing={2} mt="2">
-                    <ListItem
-                      color={requirements.minLength ? "green.500" : "red.500"}
-                    >
-                      Pelo menos 6 caracteres
-                    </ListItem>
-                    <ListItem
-                      color={requirements.hasNumber ? "green.500" : "red.500"}
-                    >
-                      Pelo menos 1 número
-                    </ListItem>
-                    <ListItem
-                      color={
-                        requirements.hasSpecialChar ? "green.500" : "red.500"
-                      }
-                    >
-                      Pelo menos 1 caractere especial
-                    </ListItem>
-                  </List>
-                </Box>
-              </FormControl>
-
-              <FormControl isInvalid={!!errors.confirmPassword}>
-                <FormLabel
-                  color="#b16831"
-                  fontFamily="'Higuen Elegant Serif', serif"
-                >
-                  Confirme a Senha
-                </FormLabel>
-                <Input
-                  type="password"
-                  borderColor="#b16831"
-                  focusBorderColor="#b16831"
-                  {...register("confirmPassword")}
-                  onChange={() => handleFieldChange("confirmPassword")}
-                />
-                {errors.confirmPassword && (
-                  <Text color="red.500">{errors.confirmPassword.message}</Text>
-                )}
-              </FormControl>
-
               <FormControl isInvalid={!!errors.phone}>
                 <FormLabel
                   color="#b16831"
@@ -210,27 +160,94 @@ const SignUpPage = () => {
                   <Text color="red.500">{errors.phone.message}</Text>
                 )}
               </FormControl>
+
+              <FormControl isInvalid={!!errors.password}>
+                <FormLabel
+                  color="#b16831"
+                  fontFamily="'Higuen Elegant Serif', serif"
+                >
+                  Senha
+                </FormLabel>
+                <Input
+                  type="password"
+                  borderColor="#b16831"
+                  focusBorderColor="#b16831"
+                  {...register("password")}
+                  onChange={(e) => {
+                    updateRequirements(e.target.value);
+                    handleFieldChange("password");
+                  }} // Monitora mudanças
+                />
+              </FormControl>
+
+              <FormControl isInvalid={!!errors.confirmPassword}>
+                <FormLabel
+                  color="#b16831"
+                  fontFamily="'Higuen Elegant Serif', serif"
+                >
+                  Repetir senha
+                </FormLabel>
+                <Input
+                  type="password"
+                  borderColor="#b16831"
+                  focusBorderColor="#b16831"
+                  {...register("confirmPassword")}
+                  onChange={() => handleFieldChange("confirmPassword")}
+                />
+                {errors.confirmPassword && (
+                  <Text color="red.500">{errors.confirmPassword.message}</Text>
+                )}
+              </FormControl>
             </SimpleGrid>
 
-            <Text
-              mt="1.5rem"
-              color="#6d1716"
-              fontFamily="'Lato', sans-serif"
-              textAlign="center"
-            >
-              Prontinho! Só criar &lt;3
-            </Text>
+            <Flex mt="4" justify="space-between">
+              {/* Requisitos de Senha */}
+              <Box>
+                <Text fontWeight="bold" color="#b16831">
+                  A senha deve conter:
+                </Text>
+                <List spacing={2} mt="2">
+                  <ListItem>
+                    {renderRequirement(
+                      requirements.minLength,
+                      "Pelo menos 6 caracteres"
+                    )}
+                  </ListItem>
+                  <ListItem>
+                    {renderRequirement(
+                      requirements.hasNumber,
+                      "Pelo menos 1 número"
+                    )}
+                  </ListItem>
+                  <ListItem>
+                    {renderRequirement(
+                      requirements.hasSpecialChar,
+                      "Pelo menos 1 caractere especial"
+                    )}
+                  </ListItem>
+                </List>
+              </Box>
 
-            <Flex justify="center" mt="1.5rem">
-              <Button
-                bg="#6d1716"
-                color="white"
-                _hover={{ bg: "#b16831" }}
-                type="submit"
-                fontFamily="'Higuen Elegant Serif', serif"
-              >
-                CRIAR CONTA
-              </Button>
+              {/* Texto e Botão */}
+              <Box textAlign="center">
+                <Text
+                  mt="1.5rem"
+                  color="#6d1716"
+                  fontFamily="'Lato', sans-serif"
+                >
+                  Prontinho! Só criar &lt;3
+                </Text>
+                <Button
+                  mt="4"
+                  bg="#6d1716"
+                  color="white"
+                  fontFamily="'Higuen Elegant Serif', serif"
+                  _hover={{ bg: "#b16831" }}
+                  type="submit"
+                >
+                  CRIAR CONTA
+                </Button>
+              </Box>
             </Flex>
           </form>
         </Box>
