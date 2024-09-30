@@ -64,7 +64,7 @@ const PasswordRecoveryPage = () => {
             <Button
               bg="#6d1716"
               color="white"
-              fontFamily="'Lato', sans-serif"
+              fontFamily="'Higuen Elegant Serif', serif"
               _hover={{ bg: "#b16831" }}
             >
               ENVIAR
