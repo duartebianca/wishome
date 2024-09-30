@@ -1,3 +1,1 @@
-# wishome
-
-<img src="wishome.png">
+<img src="/frontend/src/shared/assets/wishome.png">
