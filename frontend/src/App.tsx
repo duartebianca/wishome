@@ -6,6 +6,7 @@ import SignUpPage from "./app/register/register";
 import GiftListPage from "./app/list/list";
 import PasswordRecoveryPage from "./app/password/recover/recoverPassword";
 import ResetPasswordPage from "./app/password/reset/resetPassword";
+import WisherDashboard from "./app/wisher/dashboard/wisher-dashboard";
 
 const router = createBrowserRouter([
   {
@@ -35,6 +36,10 @@ const router = createBrowserRouter([
   {
     path: "/list",
     element: <GiftListPage />,
+  },
+  {
+    path: "wisher-dashboard",
+    element: <WisherDashboard />,
   },
 ]);
 
