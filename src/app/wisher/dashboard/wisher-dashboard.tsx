@@ -1,4 +1,3 @@
-import React from "react";
 import { Box, Button, Flex, Text, Image, Stack } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import NavBar from "../../../shared/components/nav-bar";

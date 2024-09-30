@@ -22,15 +22,12 @@ const SignUpPage = () => {
   const {
     register,
     handleSubmit,
-    watch,
     trigger,
     formState: { errors },
   } = useForm<RegisterFormInputs>({
     resolver: zodResolver(RegisterSchema),
     mode: "onChange",
   });
-
-  const password = watch("password", "");
 
   const [requirements, setRequirements] = useState({
     minLength: false,
