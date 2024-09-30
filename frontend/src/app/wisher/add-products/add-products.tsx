@@ -117,7 +117,7 @@ const AddProductPage = () => {
                 color="#b16831"
                 fontFamily="'Higuen Elegant Serif', serif"
               >
-                Preço (com o frete)
+                Preço
               </FormLabel>
               <Input
                 type="text"
