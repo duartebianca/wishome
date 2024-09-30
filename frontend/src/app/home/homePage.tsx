@@ -63,8 +63,8 @@ const HomePage = () => {
             gap={6}
             justifyContent={{ base: "center", md: "flex-start" }}
           >
-            <Text fontFamily="'Lato', sans-serif">Duda ❤️</Text>
-            <Text fontFamily="'Lato', sans-serif">Gustavo ✍️</Text>
+            <Image src="duda.png" height={20} width={"auto"} />
+            <Image src="gustavo.png" height={20} width={"auto"} />
           </Box>
         </Box>
       </Flex>
