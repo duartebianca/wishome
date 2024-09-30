@@ -1,128 +1,130 @@
-# 🎁 Wishome - Lista de Presentes
+# 🎁 Wishome - Gift List Management
 
-**Wishome** é uma aplicação para criar e gerenciar listas de presentes, onde há dois tipos de usuários: **wisher** e **gifters**. A wisher pode adicionar uma lista de presentes que deseja receber, enquanto os gifters podem marcar produtos como "pensando" ou "comprado". A wisher tem controle sobre quem pode visualizar seu endereço e acompanhar quem comprou ou está pensando em comprar determinados produtos.
+**Wishome** is an application for creating and managing gift lists, with two types of users: **wisher** and **gifters**. The wisher can create a list of gifts they would like to receive, while gifters can mark products as "thinking" or "purchased". The wisher has control over who can view their address and can track who has purchased or is thinking about purchasing certain items.
 
-## 🛠 Funcionalidades
+## 🛠 Features
 
 - **Wisher**:
-  - Único usuário responsável por criar e gerenciar a lista de presentes.
-  - Pode visualizar quem está pensando ou quem comprou cada item.
-  - Valida os gifters para que possam visualizar o endereço de entrega.
+  - A single user responsible for creating and managing the gift list.
+  - Can see which gifters are thinking about or have purchased each item.
+  - Validates gifters so they can view the delivery address.
 - **Gifters**:
-  - Podem se registrar na plataforma e visualizar a lista de presentes.
-  - Podem marcar produtos como "pensando" ou "comprado".
-  - Podem copiar o endereço da wisher (somente após serem validados).
-- **Produtos**:
-  - Todos os usuários podem ver o status dos produtos: **disponível**, **pensando**, ou **comprado**.
-  - A wisher pode ver quais gifters estão associados a produtos marcados como "pensando" ou "comprado".
 
-## 🚀 Tecnologias Utilizadas
+  - Can sign up for the platform and view the gift list.
+  - Can mark products as "thinking" or "purchased".
+  - Can copy the wisher's address (only after being validated by the wisher).
+
+- **Products**:
+  - All users can see the status of products: **available**, **thinking**, or **purchased**.
+  - The wisher can view which gifters are associated with products marked as "thinking" or "purchased".
+
+## 🚀 Technologies Used
 
 ### Frontend:
 
-- **React** com **React Router**: Navegação entre páginas.
-- **Chakra UI**: Biblioteca de componentes de interface.
-- **Firebase Authentication SDK**: Para autenticação dos usuários (gifters e wisher).
+- **React** with **React Router**: For page navigation.
+- **Chakra UI**: Component library for the interface.
+- **Firebase Authentication SDK**: For user authentication (gifters and wisher).
 
 ### Backend:
 
-- **Node.js** com **Firebase Functions** (ou Express.js) para gerenciar lógica de backend.
-- **Firebase Firestore**: Banco de dados NoSQL para armazenar informações de usuários e produtos.
-- **Firebase Admin SDK**: Para gerenciar autenticação e comunicação segura com o Firestore.
+- **Node.js** with **Firebase Functions** (or Express.js) to handle backend logic.
+- **Firebase Firestore**: NoSQL database for storing user and product information.
+- **Firebase Admin SDK**: For managing authentication and secure communication with Firestore.
 
-## 📂 Estrutura de Pastas
+## 📂 Project Structure
 
 ```
 /src
 │
 ├── /app
-│   ├── /home         # Página principal
-│   ├── /login        # Página de login de gifters
-│   ├── /register     # Página de registro de gifters
-│   ├── /list         # Página da lista de presentes
+│   ├── /home         # Home page
+│   ├── /login        # Login page for gifters
+│   ├── /register     # Registration page for gifters
+│   ├── /list         # Gift list page
 │   ├── /password
-│   │   ├── /recover  # Página de recuperação de senha
-│   │   └── /reset    # Página de redefinição de senha
-│   └── /notFound     # Página 404
+│   │   ├── /recover  # Password recovery page
+│   │   └── /reset    # Password reset page
+│   └── /notFound     # 404 page
 │
-├── /firebase-config.js   # Configuração do Firebase SDK
-├── App.tsx               # Arquivo principal da aplicação React
-└── index.tsx             # Ponto de entrada da aplicação React
+├── /firebase-config.js   # Firebase SDK configuration
+├── App.tsx               # Main React application file
+└── index.tsx             # Entry point of the React application
 ```
 
-## 🏗 Funcionalidades do Backend
+## 🏗 Backend Features
 
-- **Criação de Gifters**: Os gifters podem se registrar na plataforma, e suas informações são armazenadas no Firebase Authentication e Firestore.
-- **Autenticação**: Utilizamos o Firebase Authentication para gerenciar o login e a criação de usuários.
-- **Gestão de Produtos**:
-  - Gifter pode marcar produtos como "pensando" ou "comprado".
-  - A wisher pode visualizar todos os gifters associados a um produto.
-- **Segurança**: Todas as interações são autenticadas com tokens JWT gerados pelo Firebase, e os dados são protegidos por regras de segurança no Firestore.
+- **Gifter Registration**: Gifters can sign up on the platform, and their information is stored in Firebase Authentication and Firestore.
+- **Authentication**: We use Firebase Authentication to manage user login and account creation.
+- **Product Management**:
+  - Gifters can mark products as "thinking" or "purchased".
+  - The wisher can view all gifters associated with a product.
+- **Security**: All interactions are authenticated with JWT tokens generated by Firebase, and data is protected by Firestore security rules.
 
-## 📝 Instalação e Execução
+## 📝 Installation and Setup
 
-### Pré-requisitos
+### Prerequisites
 
 - **Node.js**: [Download](https://nodejs.org/)
-- **npm** ou **yarn**
+- **npm** or **yarn**
 
-### Passos para Executar o Projeto
+### Steps to Run the Project
 
-1. Clone o repositório:
+1. Clone the repository:
 
 ```bash
-git clone https://github.com/seu-usuario/wishome.git
+git clone https://github.com/your-username/wishome.git
 cd wishome
 ```
 
-2. Instale as dependências:
+2. Install dependencies:
 
 ```bash
 npm install
 ```
 
-3. Configuração do Firebase:
+3. Firebase Configuration:
 
-   - Crie um projeto no [Firebase Console](https://console.firebase.google.com/).
-   - Ative **Firebase Authentication** e **Cloud Firestore**.
-   - Baixe o arquivo `serviceAccountKey.json` da conta de serviço e coloque-o na pasta `/firebase`.
-   - Configure o arquivo `firebase-config.js` com as credenciais do seu projeto.
+   - Create a project on [Firebase Console](https://console.firebase.google.com/).
+   - Enable **Firebase Authentication** and **Cloud Firestore**.
+   - Download the `serviceAccountKey.json` file from the service account and place it in the `/firebase` folder.
+   - Configure the `firebase-config.js` file with your project credentials.
 
-4. Inicie a aplicação:
+4. Start the application:
 
 ```bash
 npm start
 ```
 
-### Deployment com Firebase Hosting (Opcional)
+### Deployment with Firebase Hosting (Optional)
 
-1. Instale as ferramentas do Firebase:
+1. Install Firebase CLI:
 
 ```bash
 npm install -g firebase-tools
 ```
 
-2. Autentique-se no Firebase:
+2. Log in to Firebase:
 
 ```bash
 firebase login
 ```
 
-3. Inicialize o Firebase Hosting no projeto:
+3. Initialize Firebase Hosting in the project:
 
 ```bash
 firebase init hosting
 ```
 
-4. Faça o deploy:
+4. Deploy:
 
 ```bash
 firebase deploy
 ```
 
-## 📚 Regras de Segurança no Firestore
+## 📚 Firestore Security Rules
 
-Aqui está um exemplo das regras de segurança que garantem que apenas usuários autorizados possam modificar ou visualizar dados:
+Here is an example of the security rules that ensure only authorized users can modify or view data:
 
 ```plaintext
 rules_version = '2';
@@ -134,7 +136,7 @@ service cloud.firestore {
 
     match /products/{productId} {
       allow read: if request.auth != null;
-      allow write: if request.auth != null && (request.auth.uid in resource.data.thinkers || resource.data.buyer == request.auth.uid || resource.data.status == "disponível");
+      allow write: if request.auth != null && (request.auth.uid in resource.data.thinkers || resource.data.buyer == request.auth.uid || resource.data.status == "available");
     }
 
     match /wishers/{wisherId} {
@@ -144,26 +146,21 @@ service cloud.firestore {
 }
 ```
 
-## 🔐 Segurança
+## 🔐 Security
 
-- **Senhas Criptografadas**: As senhas dos gifters são gerenciadas pelo Firebase Authentication, que já lida com a criptografia de maneira segura.
-- **Dados dos Usuários Protegidos**: Somente o próprio usuário ou o wisher pode acessar ou modificar seus dados.
-- **Tokens de Autenticação**: O acesso às rotas protegidas é controlado por tokens JWT gerados pelo Firebase.
+- **Encrypted Passwords**: Gifter passwords are managed by Firebase Authentication, which handles encryption securely.
+- **User Data Protected**: Only the user themselves or the wisher can access or modify their data.
+- **Authentication Tokens**: Access to protected routes is controlled by JWT tokens generated by Firebase.
 
-## 🎯 Funcionalidades Futuras
+## 🎯 Future Features
 
-- **Autenticação de Dois Fatores** para maior segurança.
-- **Notificações por Email** para notificar o wisher quando um produto for marcado como "comprado".
-- **Integração com APIs de Pagamento** para compras diretas através da plataforma.
+- **Two-Factor Authentication** for enhanced security.
+- **Email Notifications** to notify the wisher when a product is marked as "purchased".
 
-## 👨‍💻 Contribuições
+## 👨‍💻 Contributions
 
-1. Faça um fork do projeto.
-2. Crie uma branch com sua nova funcionalidade: `git checkout -b nova-funcionalidade`.
-3. Faça o commit: `git commit -m 'Adiciona nova funcionalidade'`.
-4. Faça o push: `git push origin nova-funcionalidade`.
-5. Crie um Pull Request.
-
----
-
-Espero que esse **README** te ajude a organizar e documentar bem o seu projeto. Se precisar de mais alguma coisa, estou à disposição!
+1. Fork the project.
+2. Create a branch for your new feature: `git checkout -b new-feature`.
+3. Commit your changes: `git commit -m 'Add new feature'`.
+4. Push to the branch: `git push origin new-feature`.
+5. Create a Pull Request.
