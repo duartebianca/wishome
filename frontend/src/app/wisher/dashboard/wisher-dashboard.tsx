@@ -1,7 +1,8 @@
 import React from "react";
-import { Box, Button, Flex, Text, Image, SimpleGrid } from "@chakra-ui/react";
+import { Box, Button, Flex, Text, Image, Stack } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import NavBar from "../../../shared/components/nav-bar";
+
 const WisherDashboard = () => {
   const navigate = useNavigate();
 
@@ -26,17 +27,6 @@ const WisherDashboard = () => {
     >
       {/* NavBar */}
       <NavBar />
-      {/* Saudação */}
-      <Text
-        fontSize="6xl"
-        fontFamily="'Higuen Elegant Serif', serif"
-        color="#6d1716"
-        mb="2rem"
-        ml={10}
-        mr={10}
-      >
-        Olá, Wisher!
-      </Text>
 
       {/* Conteúdo da Página */}
       <Flex
@@ -45,8 +35,26 @@ const WisherDashboard = () => {
         justifyContent="center"
         padding="2rem"
       >
-        {/* Grid com Cards */}
-        <SimpleGrid columns={{ base: 1, md: 3 }} spacing="2rem" width="100%">
+        {/* Saudação */}
+        <Text
+          fontSize="6xl"
+          fontFamily="'Higuen Elegant Serif', serif"
+          color="#6d1716"
+          mb="2rem"
+          ml={10}
+          mr={10}
+        >
+          Olá, Wisher!
+        </Text>
+
+        {/* Stack responsivo para os cards */}
+        <Stack
+          direction={{ base: "column", md: "row" }} // Empilha na vertical em mobile, horizontal em desktop
+          spacing="1rem"
+          width="100%"
+          align="center"
+          justify="center"
+        >
           {/* Card Adicionar Produtos */}
           <Box
             bg="white"
@@ -55,6 +63,7 @@ const WisherDashboard = () => {
             textAlign="center"
             padding="2rem"
             width={{ base: "100%", md: "300px" }}
+            height={348}
           >
             <Image
               src="https://i.imgur.com/WSri4wI.png"
@@ -69,7 +78,7 @@ const WisherDashboard = () => {
               color="#6d1716"
               mb="1rem"
             >
-              Adicionar novos produtos
+              Adicionar produtos
             </Text>
             <Button
               bg="#6d1716"
@@ -90,6 +99,7 @@ const WisherDashboard = () => {
             textAlign="center"
             padding="2rem"
             width={{ base: "100%", md: "300px" }}
+            height={348}
           >
             <Image
               src="https://i.imgur.com/I7e6SdA.png"
@@ -125,6 +135,7 @@ const WisherDashboard = () => {
             textAlign="center"
             padding="2rem"
             width={{ base: "100%", md: "300px" }}
+            height={348}
           >
             <Image
               src="https://i.imgur.com/zK3gldR.png"
@@ -151,7 +162,7 @@ const WisherDashboard = () => {
               VISUALIZAR
             </Button>
           </Box>
-        </SimpleGrid>
+        </Stack>
       </Flex>
     </Box>
   );
