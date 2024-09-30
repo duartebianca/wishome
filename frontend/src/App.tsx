@@ -9,6 +9,7 @@ import ResetPasswordPage from "./app/password/reset/resetPassword";
 import WisherDashboard from "./app/wisher/dashboard/wisher-dashboard";
 import AddProductPage from "./app/wisher/add-products/add-products";
 import ValidateUsersPage from "./app/wisher/validate-users/validate-users";
+import ListStatusPage from "./app/wisher/wishlist/wishlist";
 
 const router = createBrowserRouter([
   {
@@ -50,6 +51,10 @@ const router = createBrowserRouter([
   {
     path: "wisher-confirm-users",
     element: <ValidateUsersPage />,
+  },
+  {
+    path: "wisher-wishlist-status",
+    element: <ListStatusPage />,
   },
 ]);
 
