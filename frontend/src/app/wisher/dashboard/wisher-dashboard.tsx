@@ -55,42 +55,6 @@ const WisherDashboard = () => {
           align="center"
           justify="center"
         >
-          {/* Card Adicionar Produtos */}
-          <Box
-            bg="white"
-            borderRadius="lg"
-            boxShadow="md"
-            textAlign="center"
-            padding="2rem"
-            width={{ base: "100%", md: "300px" }}
-            height={348}
-          >
-            <Image
-              src="https://i.imgur.com/WSri4wI.png"
-              alt="Adicionar novos produtos"
-              boxSize="120px"
-              mx="auto"
-              mb="1rem"
-            />
-            <Text
-              fontSize="xl"
-              fontFamily="'Higuen Elegant Serif', serif"
-              color="#6d1716"
-              mb="1rem"
-            >
-              Adicionar produtos
-            </Text>
-            <Button
-              bg="#6d1716"
-              color="white"
-              fontFamily="'Higuen Elegant Serif', serif"
-              _hover={{ bg: "#b16831" }}
-              onClick={handleAddProduct}
-            >
-              ADICIONAR
-            </Button>
-          </Box>
-
           {/* Card Validar Usuários */}
           <Box
             bg="white"
@@ -124,6 +88,41 @@ const WisherDashboard = () => {
               onClick={handleValidateUsers}
             >
               VALIDAR
+            </Button>
+          </Box>
+          {/* Card Adicionar Produtos */}
+          <Box
+            bg="white"
+            borderRadius="lg"
+            boxShadow="md"
+            textAlign="center"
+            padding="2rem"
+            width={{ base: "100%", md: "300px" }}
+            height={348}
+          >
+            <Image
+              src="https://i.imgur.com/WSri4wI.png"
+              alt="Adicionar novos produtos"
+              boxSize="120px"
+              mx="auto"
+              mb="1rem"
+            />
+            <Text
+              fontSize="xl"
+              fontFamily="'Higuen Elegant Serif', serif"
+              color="#6d1716"
+              mb="1rem"
+            >
+              Adicionar produtos
+            </Text>
+            <Button
+              bg="#6d1716"
+              color="white"
+              fontFamily="'Higuen Elegant Serif', serif"
+              _hover={{ bg: "#b16831" }}
+              onClick={handleAddProduct}
+            >
+              ADICIONAR
             </Button>
           </Box>
 
