@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const passwordValidation = z.string({
+export const passwordValidation = z.string().min(6, {
   message: "E-mail ou Senha Incorretos.",
 });
 
