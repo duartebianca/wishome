@@ -117,23 +117,25 @@ const GiftCard = ({ item }: { item: Item }) => {
         PIX
       </Button>
 
-      {/* Redirecionamento para página de compra */}
-      <Button
-        as="a"
-        href={item.purchaseLink}
-        target="_blank"
-        _hover={{ bg: "#b16831" }}
-        rel="noopener noreferrer"
-        variant="ghost"
-        bg="#6d1716"
-        color="white"
-        fontFamily="'Higuen Elegant Serif', serif"
-        leftIcon={<LinkIcon />} // Ícone de link
-        height="30px"
-        width="auto"
-      >
-        Compre na Loja
-      </Button>
+      {/* Condicional: Redirecionamento para página de compra apenas se purchaseLink estiver setado */}
+      {item.purchaseLink && (
+          <Button
+            as="a"
+            href={item.purchaseLink}
+            target="_blank"
+            _hover={{ bg: "#b16831" }}
+            rel="noopener noreferrer"
+            variant="ghost"
+            bg="#6d1716"
+            color="white"
+            fontFamily="'Higuen Elegant Serif', serif"
+            leftIcon={<LinkIcon />} // Ícone de link
+            height="30px"
+            width="auto"
+          >
+            Compre na Loja
+          </Button>
+        )}
     </Flex>
 
       {/* Modal para exibir o QR Code */}
