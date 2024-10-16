@@ -14,7 +14,10 @@ import {
   ModalCloseButton,
   ModalBody,
   ModalFooter,
+  useToast,
 } from "@chakra-ui/react";
+import {LinkIcon} from "@chakra-ui/icons";
+import { MdPix } from "react-icons/md";
 
 interface Item {
   image: string;
@@ -26,6 +29,20 @@ interface Item {
 
 const GiftCard = ({ item }: { item: Item }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const toast = useToast();
+  const chavePix = "81995115978";
+  
+  const handleCopy = () => {
+      navigator.clipboard.writeText(chavePix);
+      toast({
+        title: "Chave PIX copiada.",
+        description: "A chave PIX foi copiada para a área de transferência.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+  };
+  
 
   return (
     <Box
@@ -82,34 +99,42 @@ const GiftCard = ({ item }: { item: Item }) => {
         </Tag>
       </Flex>
 
-      {/* Botões (Imagens) */}
-      <Flex justify="space-around" mt="1rem">
-        {/* Botão Chave PIX que abre um Modal */}
-        <Button variant="ghost" onClick={onOpen}>
-          <Image
-            src="/pix-button.png"
-            alt="Chave PIX"
-            width="300px"
-            cursor="pointer"
-          />
-        </Button>
-
-        {/* Redirecionamento para página de compra */}
-        <Button
-          as="a"
-          href={item.purchaseLink}
-          target="_blank"
-          rel="noopener noreferrer"
-          variant="ghost"
+      
+    {/* Botões (com Símbolos e Texto) */}
+    <Flex justify="space-around" mt="1rem" gap="0.3rem">
+      {/* Botão Chave PIX que abre um Modal */}
+      <Button
+        variant="ghost"
+        bg="#6d1716"
+        height="30px"
+        width="auto"
+        color="white"
+        fontFamily="'Higuen Elegant Serif', serif"
+        _hover={{ bg: "#b16831" }}
+        onClick={onOpen}
+        leftIcon={<MdPix />}
         >
-          <Image
-            src="/buy-button.png"
-            alt="Compre na Loja"
-            width="500px"
-            cursor="pointer"
-          />
-        </Button>
-      </Flex>
+        PIX
+      </Button>
+
+      {/* Redirecionamento para página de compra */}
+      <Button
+        as="a"
+        href={item.purchaseLink}
+        target="_blank"
+        _hover={{ bg: "#b16831" }}
+        rel="noopener noreferrer"
+        variant="ghost"
+        bg="#6d1716"
+        color="white"
+        fontFamily="'Higuen Elegant Serif', serif"
+        leftIcon={<LinkIcon />} // Ícone de link
+        height="30px"
+        width="auto"
+      >
+        Compre na Loja
+      </Button>
+    </Flex>
 
       {/* Modal para exibir o QR Code */}
       <Modal isOpen={isOpen} onClose={onClose} isCentered>
@@ -118,6 +143,11 @@ const GiftCard = ({ item }: { item: Item }) => {
           <ModalHeader>Chave PIX</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
+            <Text> Você pode escanear o QR Code ou utilizar a chave pix 81995115978. </Text>
+            {/* Botão de copiar a chave PIX */}
+            <Button mt={4} colorScheme="blue" onClick={handleCopy}>
+              Copiar a chave PIX
+            </Button>
             <Image src={item.qrCodeImage} alt="QR Code" width="100%" />
           </ModalBody>
           <ModalFooter>

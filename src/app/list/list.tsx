@@ -9,7 +9,7 @@ const GiftListPage = () => {
       name: "Copo d'água",
       price: 199.0,
       image: "https://static.paodeacucar.com/img/uploads/1/798/19755798.png",
-      qrCodeImage: "/qr-code-example.png", // Imagem do QR Code
+      qrCodeImage: "/qrcode.png", // Imagem do QR Code
       purchaseLink: "https://loja-exemplo.com/compre-item", // Link da loja
     },
     {
@@ -17,7 +17,7 @@ const GiftListPage = () => {
       price: 59.9,
       image:
         "https://dialogosviagenspedagogicas.com.br/wp-content/uploads/2023/06/image-507-1024x512.png",
-      qrCodeImage: "/qr-code-book.png",
+      qrCodeImage: "/qrcode.png",
       purchaseLink: "https://loja-exemplo.com/livro",
     },
     {
@@ -25,7 +25,7 @@ const GiftListPage = () => {
       price: 499.0,
       image:
         "https://s2-techtudo.glbimg.com/BmK7QAm-GBwe7lPABA782aUjlFE=/0x0:1920x1080/984x0/smart/filters:strip_icc()/i.s3.glbimg.com/v1/AUTH_08fbf48bc0524877943fe86e43087e7a/internal_photos/bs/2024/W/O/oDtPWgRfG5r9A2rdaYWA/fogao-cooktop-5-bocas.jpg",
-      qrCodeImage: "/qr-code-product.png",
+      qrCodeImage: "/qrcode.png",
       purchaseLink: "https://loja-exemplo.com/produto-2",
     },
   ];
