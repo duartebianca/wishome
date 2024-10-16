@@ -6,27 +6,17 @@ const GiftListPage = () => {
   // Lista de presentes (exemplo)
   const items = [
     {
-      name: "Copo d'água",
-      price: 199.0,
+      name: "Chave Pix",
+      price: "Valor Livre",
+      image: "https://psverso.com.br/wp-content/uploads/2022/09/simbolo-pix-nick-bio-free-fire.webp",
+      qrCodeImage: "/qrcode.png", // Imagem do QR Code
+    },
+    {
+      name: "Kit de 6 copos",
+      price: 27.54,
       image: "https://static.paodeacucar.com/img/uploads/1/798/19755798.png",
       qrCodeImage: "/qrcode.png", // Imagem do QR Code
-      purchaseLink: "https://loja-exemplo.com/compre-item", // Link da loja
-    },
-    {
-      name: "Livro Exemplo",
-      price: 59.9,
-      image:
-        "https://dialogosviagenspedagogicas.com.br/wp-content/uploads/2023/06/image-507-1024x512.png",
-      qrCodeImage: "/qrcode.png",
-      purchaseLink: "https://loja-exemplo.com/livro",
-    },
-    {
-      name: "Produto Exemplo 2",
-      price: 499.0,
-      image:
-        "https://s2-techtudo.glbimg.com/BmK7QAm-GBwe7lPABA782aUjlFE=/0x0:1920x1080/984x0/smart/filters:strip_icc()/i.s3.glbimg.com/v1/AUTH_08fbf48bc0524877943fe86e43087e7a/internal_photos/bs/2024/W/O/oDtPWgRfG5r9A2rdaYWA/fogao-cooktop-5-bocas.jpg",
-      qrCodeImage: "/qrcode.png",
-      purchaseLink: "https://loja-exemplo.com/produto-2",
+      purchaseLink: "https://www.lebiscuit.com.br/jg-copo-nadir-oca-c-6-300ml-7729-5083647/p?idsku=1950371492&utm_source=google&utm_medium=cpc&utm_campaign=GOOGLE-PMAX_GERAL_NORDESTE_CONV&utm_content=NA_&utm_term=GERAL&utm_source_platform=&utm_creative_format=NA&utm_marketing_tatic=NA&gad_source=4&gclid=Cj0KCQjwyL24BhCtARIsALo0fSAhNEX1bfGStyw8j_g10aOcOPqf0VSjGDea9CYjuBPulWPQVknRMjQaApEmEALw_wcB", // Link da loja
     },
   ];
 

@@ -22,8 +22,8 @@ import { MdPix } from "react-icons/md";
 interface Item {
   image: string;
   name: string;
-  price: number;
-  purchaseLink: string;
+  price: string | number;
+  purchaseLink?: string;
   qrCodeImage: string;
 }
 
@@ -36,7 +36,7 @@ const GiftCard = ({ item }: { item: Item }) => {
       navigator.clipboard.writeText(chavePix);
       toast({
         title: "Chave PIX copiada.",
-        description: "A chave PIX foi copiada para a área de transferência.",
+        description: "Você pode colar a chave PIX no aplicativo de sua preferência.",
         status: "success",
         duration: 3000,
         isClosable: true,
@@ -140,18 +140,18 @@ const GiftCard = ({ item }: { item: Item }) => {
       <Modal isOpen={isOpen} onClose={onClose} isCentered>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Chave PIX</ModalHeader>
+          <ModalHeader fontFamily="'Higuen Elegant Serif', serif">Chave PIX</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Text> Você pode escanear o QR Code ou utilizar a chave pix 81995115978. </Text>
+            <Text fontFamily={"Lato"}> Você pode escanear o QR Code ou utilizar a chave pix 81995115978. </Text>
             {/* Botão de copiar a chave PIX */}
-            <Button mt={4} colorScheme="blue" onClick={handleCopy}>
+            <Button mt={4} colorScheme="blue" onClick={handleCopy} fontFamily="'Higuen Elegant Serif', serif" bg="#6d1716" _hover={{ bg: "#b16831" }}>
               Copiar a chave PIX
             </Button>
             <Image src={item.qrCodeImage} alt="QR Code" width="100%" />
           </ModalBody>
           <ModalFooter>
-            <Button colorScheme="red" mr={3} onClick={onClose}>
+            <Button colorScheme="red" mr={3} onClick={onClose} fontFamily="'Higuen Elegant Serif', serif" bg="#6d1716" _hover={{ bg: "#b16831" }} >
               Fechar
             </Button>
           </ModalFooter>
