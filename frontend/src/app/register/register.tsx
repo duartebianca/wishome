@@ -13,16 +13,17 @@ import {
   List,
   ListItem,
   HStack,
+  useToast,
 } from "@chakra-ui/react";
 import NavBar from "../../shared/components/nav-bar";
 import { RegisterFormInputs, RegisterSchema } from "./forms/register-form";
 import { CheckCircleIcon, SmallCloseIcon } from "@chakra-ui/icons";
+import { useNavigate } from "react-router-dom"; // Importando o hook de navegação
 
 const SignUpPage = () => {
   const {
     register,
     handleSubmit,
-    trigger,
     formState: { errors },
   } = useForm<RegisterFormInputs>({
     resolver: zodResolver(RegisterSchema),
@@ -35,6 +36,9 @@ const SignUpPage = () => {
     hasSpecialChar: false,
   });
 
+  const toast = useToast();
+  const navigate = useNavigate(); // Hook de navegação
+
   // Atualiza os requisitos conforme a senha é digitada
   const updateRequirements = (password: string) => {
     setRequirements({
@@ -44,13 +48,48 @@ const SignUpPage = () => {
     });
   };
 
-  const handleFieldChange = async (field: keyof RegisterFormInputs) => {
-    await trigger(field); // Dispara a validação do campo específico
-  };
+  const onSubmit = async (data: RegisterFormInputs) => {
+    try {
+      const response = await fetch("http://localhost:5000/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
 
-  const onSubmit = (data: RegisterFormInputs) => {
-    console.log(data);
-    // Lógica de envio do formulário aqui
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Erro ao criar conta");
+      }
+
+      const result = await response.json();
+      console.log(result);
+
+      // Exibe Toast de sucesso
+      toast({
+        title: "Conta criada com sucesso!",
+        description: "Você já pode fazer login.",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
+
+      // Redireciona para a página de login
+      navigate("/login");
+
+    } catch (error: any) {
+      console.error(error);
+
+      // Exibe Toast de erro
+      toast({
+        title: "Erro ao criar conta",
+        description: error.message || "Tente novamente.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    }
   };
 
   const renderRequirement = (isMet: boolean, label: string) => (
@@ -113,7 +152,6 @@ const SignUpPage = () => {
                   borderColor="#b16831"
                   focusBorderColor="#b16831"
                   {...register("name")}
-                  onChange={() => handleFieldChange("name")}
                 />
                 {errors.name && (
                   <Text color="red.500">{errors.name.message}</Text>
@@ -132,7 +170,6 @@ const SignUpPage = () => {
                   borderColor="#b16831"
                   focusBorderColor="#b16831"
                   {...register("email")}
-                  onChange={() => handleFieldChange("email")}
                 />
                 {errors.email && (
                   <Text color="red.500">{errors.email.message}</Text>
@@ -151,7 +188,6 @@ const SignUpPage = () => {
                   borderColor="#b16831"
                   focusBorderColor="#b16831"
                   {...register("phone")}
-                  onChange={() => handleFieldChange("phone")}
                 />
                 {errors.phone && (
                   <Text color="red.500">{errors.phone.message}</Text>
@@ -172,9 +208,11 @@ const SignUpPage = () => {
                   {...register("password")}
                   onChange={(e) => {
                     updateRequirements(e.target.value);
-                    handleFieldChange("password");
-                  }} // Monitora mudanças
+                  }}
                 />
+                {errors.password && (
+                  <Text color="red.500">{errors.password.message}</Text>
+                )}
               </FormControl>
 
               <FormControl isInvalid={!!errors.confirmPassword}>
@@ -189,7 +227,6 @@ const SignUpPage = () => {
                   borderColor="#b16831"
                   focusBorderColor="#b16831"
                   {...register("confirmPassword")}
-                  onChange={() => handleFieldChange("confirmPassword")}
                 />
                 {errors.confirmPassword && (
                   <Text color="red.500">{errors.confirmPassword.message}</Text>
