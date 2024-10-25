@@ -18,13 +18,12 @@ import {
 import NavBar from "../../shared/components/nav-bar";
 import { RegisterFormInputs, RegisterSchema } from "./forms/register-form";
 import { CheckCircleIcon, SmallCloseIcon } from "@chakra-ui/icons";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom"; // Importando o hook de navegação
 
 const SignUpPage = () => {
   const {
     register,
     handleSubmit,
-    trigger,
     formState: { errors },
   } = useForm<RegisterFormInputs>({
     resolver: zodResolver(RegisterSchema),
@@ -37,7 +36,8 @@ const SignUpPage = () => {
     hasSpecialChar: false,
   });
 
-  const toast = useToast(); // Hook do Chakra UI para exibir Toasts
+  const toast = useToast();
+  const navigate = useNavigate(); // Hook de navegação
 
   // Atualiza os requisitos conforme a senha é digitada
   const updateRequirements = (password: string) => {
@@ -46,10 +46,6 @@ const SignUpPage = () => {
       hasNumber: /[0-9]/.test(password),
       hasSpecialChar: /[!@#$%^&*(),.?":{}|<>]/.test(password),
     });
-  };
-
-  const handleFieldChange = async (field: keyof RegisterFormInputs) => {
-    await trigger(field); // Dispara a validação do campo específico
   };
 
   const onSubmit = async (data: RegisterFormInputs) => {
@@ -78,6 +74,10 @@ const SignUpPage = () => {
         duration: 5000,
         isClosable: true,
       });
+
+      // Redireciona para a página de login
+      navigate("/login");
+
     } catch (error: any) {
       console.error(error);
 
@@ -152,7 +152,6 @@ const SignUpPage = () => {
                   borderColor="#b16831"
                   focusBorderColor="#b16831"
                   {...register("name")}
-                  onChange={() => handleFieldChange("name")}
                 />
                 {errors.name && (
                   <Text color="red.500">{errors.name.message}</Text>
@@ -171,7 +170,6 @@ const SignUpPage = () => {
                   borderColor="#b16831"
                   focusBorderColor="#b16831"
                   {...register("email")}
-                  onChange={() => handleFieldChange("email")}
                 />
                 {errors.email && (
                   <Text color="red.500">{errors.email.message}</Text>
@@ -190,7 +188,6 @@ const SignUpPage = () => {
                   borderColor="#b16831"
                   focusBorderColor="#b16831"
                   {...register("phone")}
-                  onChange={() => handleFieldChange("phone")}
                 />
                 {errors.phone && (
                   <Text color="red.500">{errors.phone.message}</Text>
@@ -211,9 +208,11 @@ const SignUpPage = () => {
                   {...register("password")}
                   onChange={(e) => {
                     updateRequirements(e.target.value);
-                    handleFieldChange("password");
-                  }} // Monitora mudanças
+                  }}
                 />
+                {errors.password && (
+                  <Text color="red.500">{errors.password.message}</Text>
+                )}
               </FormControl>
 
               <FormControl isInvalid={!!errors.confirmPassword}>
@@ -228,7 +227,6 @@ const SignUpPage = () => {
                   borderColor="#b16831"
                   focusBorderColor="#b16831"
                   {...register("confirmPassword")}
-                  onChange={() => handleFieldChange("confirmPassword")}
                 />
                 {errors.confirmPassword && (
                   <Text color="red.500">{errors.confirmPassword.message}</Text>
