@@ -13,10 +13,12 @@ import {
   List,
   ListItem,
   HStack,
+  useToast,
 } from "@chakra-ui/react";
 import NavBar from "../../shared/components/nav-bar";
 import { RegisterFormInputs, RegisterSchema } from "./forms/register-form";
 import { CheckCircleIcon, SmallCloseIcon } from "@chakra-ui/icons";
+import { useNavigate } from "react-router-dom";
 
 const SignUpPage = () => {
   const {
@@ -35,6 +37,8 @@ const SignUpPage = () => {
     hasSpecialChar: false,
   });
 
+  const toast = useToast(); // Hook do Chakra UI para exibir Toasts
+
   // Atualiza os requisitos conforme a senha é digitada
   const updateRequirements = (password: string) => {
     setRequirements({
@@ -48,9 +52,44 @@ const SignUpPage = () => {
     await trigger(field); // Dispara a validação do campo específico
   };
 
-  const onSubmit = (data: RegisterFormInputs) => {
-    console.log(data);
-    // Lógica de envio do formulário aqui
+  const onSubmit = async (data: RegisterFormInputs) => {
+    try {
+      const response = await fetch("http://localhost:5000/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Erro ao criar conta");
+      }
+
+      const result = await response.json();
+      console.log(result);
+
+      // Exibe Toast de sucesso
+      toast({
+        title: "Conta criada com sucesso!",
+        description: "Você já pode fazer login.",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
+    } catch (error: any) {
+      console.error(error);
+
+      // Exibe Toast de erro
+      toast({
+        title: "Erro ao criar conta",
+        description: error.message || "Tente novamente.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    }
   };
 
   const renderRequirement = (isMet: boolean, label: string) => (
