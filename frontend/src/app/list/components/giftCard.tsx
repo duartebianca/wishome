@@ -133,7 +133,7 @@ const GiftCard = ({ item }: { item: Item }) => {
             height="30px"
             width="auto"
           >
-            Compre na Loja
+            Loja
           </Button>
         )}
     </Flex>
