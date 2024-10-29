@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Routes, Route, useNavigate } from "react-router-dom";
+import { Routes, Route} from "react-router-dom";
 import NotFound from "./app/notFound/notFound";
 import HomePage from "./app/home/homePage";
 import SignUpPage from "./app/register/register";
