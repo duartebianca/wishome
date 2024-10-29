@@ -65,7 +65,6 @@ const AddProductPage = () => {
           duration: 5000,
           isClosable: true,
         });
-        navigate("/wisher-dashboard"); // Redireciona de volta para o dashboard do wisher
       } else {
         const errorData = await response.json();
         throw new Error(errorData.error || "Erro ao adicionar produto");
