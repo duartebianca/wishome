@@ -1,5 +1,23 @@
 import { useEffect, useState } from "react";
-import { Box, Flex, Text, SimpleGrid, Tag, TagLabel, useDisclosure, useToast } from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  Text,
+  SimpleGrid,
+  Tag,
+  TagLabel,
+  useDisclosure,
+  useToast,
+  Button,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  ModalFooter,
+} from "@chakra-ui/react";
+import { FaTruck } from "react-icons/fa";
 import GiftCard from "./components/giftCard";
 import EditProductModal from "./components/editProductModal";
 
@@ -14,11 +32,28 @@ interface GiftItem {
   gifter_id?: number;
 }
 
+interface Address {
+  cep: string;
+  street: string;
+  number: string;
+  complement?: string;
+  neighborhood: string;
+  city: string;
+  state: string;
+  reference_point?: string;
+}
+
 const GiftListPage = () => {
   const [items, setItems] = useState<GiftItem[]>([]);
-  const [selectedItem, setSelectedItem] = useState<GiftItem | null>(null); // Estado para o item em edição
-  const { isOpen, onOpen, onClose } = useDisclosure(); // Controle do modal de edição
+  const [selectedItem, setSelectedItem] = useState<GiftItem | null>(null);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen: isAddressOpen, onOpen: onOpenAddress, onClose: onCloseAddress } = useDisclosure();
+  const [address, setAddress] = useState<Address | null>(null);
   const toast = useToast();
+
+  useEffect(() => {
+    fetchGiftItems();
+  }, []);
 
   const fetchGiftItems = async () => {
     try {
@@ -57,31 +92,77 @@ const GiftListPage = () => {
     }
   };
 
-  useEffect(() => {
-    fetchGiftItems();
-  }, []);
+  const fetchAddress = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch("http://localhost:5000/address", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!response.ok) {
+        if (response.status === 403) {
+          toast({
+            title: "Acesso negado",
+            description: "Para acessar o endereço, Duda ou Gustavo devem validar que te conhecem.",
+            status: "info",
+            duration: 5000,
+            isClosable: true,
+          });
+        } else {
+          throw new Error("Erro ao buscar endereço");
+        }
+        return;
+      }
+      const data = await response.json();
+      setAddress(data);
+      onOpenAddress();
+    } catch (error) {
+      toast({
+        title: "Erro",
+        description: "Não foi possível buscar o endereço.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
+
+  const handleShowAddress = () => {
+    fetchAddress();
+  };
+
+  const handleCopyAddress = () => {
+    if (address) {
+      const formattedAddress = `CEP: ${address.cep}. ${address.street}, ${address.number}, ${address.complement || ""}, ${address.neighborhood}, ${address.city}, ${address.state}. Ponto de referência: ${address.reference_point || ""}`;
+      navigator.clipboard.writeText(formattedAddress);
+      toast({
+        title: "Endereço copiado",
+        description: "O endereço foi copiado para a área de transferência.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
 
   const handleEdit = (item: GiftItem) => {
-    setSelectedItem(item); // Define o item a ser editado
-    onOpen(); // Abre o modal de edição
+    setSelectedItem(item);
+    onOpen();
   };
 
   const handleDelete = async (id: number) => {
     try {
       const token = localStorage.getItem("token");
-
       const response = await fetch(`http://localhost:5000/products/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-
+  
       if (!response.ok) {
         throw new Error("Erro ao deletar o produto");
       }
-
-      // Atualiza a lista de presentes após deletar o item
+  
       setItems((prevItems) => prevItems.filter((item) => item.id !== id));
       toast({
         title: "Item deletado com sucesso",
@@ -104,31 +185,25 @@ const GiftListPage = () => {
     setItems((prevItems) =>
       prevItems.map((item) => (item.id === updatedItem.id ? updatedItem : item))
     );
-    setSelectedItem(null); // Reseta o item selecionado
-    onClose(); // Fecha o modal
-    console.log("Item atualizado:", updatedItem);
+    setSelectedItem(null);
+    onClose();
   };
 
   return (
-    <Box
-      backgroundImage="url('/background.png')"
-      backgroundSize="cover"
-      backgroundPosition="center"
-      minHeight="100vh"
-    >
+    <Box backgroundImage="url('/background.png')" backgroundSize="cover" backgroundPosition="center" minHeight="100vh">
       <Flex direction="column" alignItems="center" justifyContent="center" padding="2rem">
         <Text fontSize="4xl" fontFamily="'Higuen Elegant Serif', serif" color="#6d1716" mb="2rem">
           Lista de Presentes
         </Text>
-        <Flex mb="2rem" gap={4}>
-          <Tag size="lg" colorScheme="green"><TagLabel>DISPONÍVEL</TagLabel></Tag>
-          <Tag size="lg" colorScheme="orange"><TagLabel>PENSANDO</TagLabel></Tag>
-          <Tag size="lg" colorScheme="red"><TagLabel>COMPRADO</TagLabel></Tag>
-        </Flex>
+
+        <Button leftIcon={<FaTruck />} colorScheme="blue" mb="1.5rem" onClick={handleShowAddress}>
+          Ver Endereço de Entrega
+        </Button>
+
         <SimpleGrid columns={{ base: 1, md: 4 }} spacing="1.5rem" width="100%">
-          {items.map((item, index) => (
+          {items.map((item) => (
             <GiftCard
-              key={index}
+              key={item.id}
               item={item}
               role={localStorage.getItem("role")}
               onDelete={handleDelete}
@@ -137,6 +212,35 @@ const GiftListPage = () => {
           ))}
         </SimpleGrid>
       </Flex>
+
+      {/* Modal de Endereço */}
+      <Modal isOpen={isAddressOpen} onClose={onCloseAddress}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Endereço de Entrega</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            {address ? (
+              <>
+                <Text>{`CEP: ${address.cep}`}</Text>
+                <Text>{`${address.street}, ${address.number}, ${address.complement}`} </Text>
+                <Text>{`${address.neighborhood}, ${address.city}, ${address.state}`}</Text>
+                {address.reference_point&& <Text>{`Ponto de referência: ${address.reference_point}`}</Text>}
+                <Button mt={4} onClick={handleCopyAddress} colorScheme="blue">
+                  Copiar Endereço Completo
+                </Button>
+              </>
+            ) : (
+              <Text>Carregando...</Text>
+            )}
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="red" onClick={onCloseAddress}>
+              Fechar
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
 
       {/* Modal de Edição */}
       {selectedItem && (
