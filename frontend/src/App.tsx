@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"; 
+import { useState } from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import NotFound from "./app/notFound/notFound";
 import HomePage from "./app/home/homePage";
@@ -14,57 +14,16 @@ import NavBar from "./shared/components/nav-bar";
 import LoginPage from "./app/login/login";
 
 const App: React.FC = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [userRole, setUserRole] = useState<string | null>(null);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-
-    if (token) {
-      setIsAuthenticated(true);
-
-      fetch("http://localhost:5000/verify-role", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-        .then(response => response.json())
-        .then(data => {
-          if (data.role) {
-            setUserRole(data.role);
-          } else {
-            setUserRole(null);
-          }
-        })
-        .catch(() => {
-          setIsAuthenticated(false);
-          setUserRole(null);
-          localStorage.removeItem("token");
-        });
-    } else {
-      setIsAuthenticated(false);
-      setUserRole(null);
-    }
-  }, []);
+  const [isAuthenticated, setIsAuthenticated] = useState(() => !!localStorage.getItem("token"));
+  const userRole = localStorage.getItem("role");
 
   return (
     <>
-      <NavBar
-        isAuthenticated={isAuthenticated}
-        setIsAuthenticated={setIsAuthenticated}
-        role={userRole}
-      />
+      <NavBar isAuthenticated={isAuthenticated} setIsAuthenticated={setIsAuthenticated} role={userRole} />
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="*" element={<NotFound />} />
-        <Route
-          path="/login"
-          element={<LoginPage setIsAuthenticated={setIsAuthenticated} setUserRole={function (role: string | null): void {
-            throw new Error("Function not implemented.");
-          } } />}
-        />
+        <Route path="/login" element={<LoginPage setIsAuthenticated={setIsAuthenticated} />} />
         <Route path="/register" element={<SignUpPage />} />
         <Route path="/password-recovery" element={<PasswordRecoveryPage />} />
         <Route path="/password-reset" element={<ResetPasswordPage />} />

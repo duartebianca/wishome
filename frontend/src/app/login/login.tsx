@@ -17,13 +17,9 @@ import { LoginFormInputs, LoginSchema } from "./forms/login-form";
 
 interface LoginPageProps {
   setIsAuthenticated: (value: boolean) => void;
-  setUserRole: (role: string | null) => void;
 }
 
-const LoginPage: React.FC<LoginPageProps> = ({
-  setIsAuthenticated,
-  setUserRole,
-}) => {
+const LoginPage: React.FC<LoginPageProps> = ({ setIsAuthenticated }) => {
   const navigate = useNavigate();
   const toast = useToast();
 
@@ -35,7 +31,6 @@ const LoginPage: React.FC<LoginPageProps> = ({
     resolver: zodResolver(LoginSchema),
   });
 
-  // Função para tratar o envio do formulário
   const onSubmit = async (data: LoginFormInputs) => {
     try {
       const response = await fetch("http://localhost:5000/login", {
@@ -53,10 +48,9 @@ const LoginPage: React.FC<LoginPageProps> = ({
 
       const result = await response.json();
       localStorage.setItem("token", result.token); // Armazena o token JWT no localStorage
+      localStorage.setItem("role", result.role); // Armazena o papel do usuário no localStorage
       setIsAuthenticated(true); // Atualiza o estado de autenticação
-      setUserRole(result.role); // Define o papel do usuário (wisher ou gifter)
 
-      // Exibe Toast de sucesso
       toast({
         title: "Login realizado com sucesso!",
         description: "Você será redirecionado.",
@@ -65,16 +59,14 @@ const LoginPage: React.FC<LoginPageProps> = ({
         isClosable: true,
       });
 
-      // Redireciona para a página correta com base no papel do usuário
       if (result.role === "wisher") {
         navigate("/wisher-dashboard");
       } else {
         navigate("/list");
       }
     } catch (error: any) {
-      console.error(error);
+      console.error("Erro ao fazer login:", error);
 
-      // Exibe Toast de erro
       toast({
         title: "Erro ao fazer login",
         description: error.message || "Tente novamente.",
