@@ -10,7 +10,6 @@ import {
   SimpleGrid,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
-import NavBar from "../../../shared/components/nav-bar";
 
 const AddProductPage = () => {
   const navigate = useNavigate();
@@ -26,8 +25,6 @@ const AddProductPage = () => {
       backgroundPosition="center"
       minHeight="100vh"
     >
-      {/* NavBar */}
-      <NavBar />
 
       {/* Conteúdo da Página */}
       <Flex

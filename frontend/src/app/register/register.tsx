@@ -15,7 +15,6 @@ import {
   HStack,
   useToast,
 } from "@chakra-ui/react";
-import NavBar from "../../shared/components/nav-bar";
 import { RegisterFormInputs, RegisterSchema } from "./forms/register-form";
 import { CheckCircleIcon, SmallCloseIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom"; // Importando o hook de navegação
@@ -110,7 +109,6 @@ const SignUpPage = () => {
       backgroundPosition="center"
       minHeight="100vh"
     >
-      <NavBar />
 
       <Flex
         justify="center"

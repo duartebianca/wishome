@@ -1,5 +1,4 @@
 import { Box, Flex, Text, SimpleGrid, Tag, TagLabel } from "@chakra-ui/react";
-import NavBar from "../../shared/components/nav-bar"; // Supondo que você já tenha a NavBar importada
 import GiftCard from "./components/giftCard";
 
 const GiftListPage = () => {
@@ -27,8 +26,6 @@ const GiftListPage = () => {
       backgroundPosition="center"
       minHeight="100vh"
     >
-      {/* NavBar */}
-      <NavBar />
 
       {/* Conteúdo da Página */}
       <Flex

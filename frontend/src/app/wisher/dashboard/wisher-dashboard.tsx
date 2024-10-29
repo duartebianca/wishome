@@ -1,6 +1,5 @@
 import { Box, Button, Flex, Text, Image, Stack } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
-import NavBar from "../../../shared/components/nav-bar";
 
 const WisherDashboard = () => {
   const navigate = useNavigate();
@@ -24,8 +23,6 @@ const WisherDashboard = () => {
       backgroundPosition="center"
       minHeight="100vh"
     >
-      {/* NavBar */}
-      <NavBar />
 
       {/* Conteúdo da Página */}
       <Flex

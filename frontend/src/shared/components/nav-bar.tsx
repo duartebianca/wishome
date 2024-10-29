@@ -14,8 +14,15 @@ import {
 } from "@chakra-ui/react";
 import { FaBars } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
-const NavBar = () => {
+interface NavBarProps {
+  isAuthenticated: boolean;
+  setIsAuthenticated: (value: boolean) => void;
+  role: string | null; // Novo campo adicionado
+}
+
+const NavBar: React.FC<NavBarProps> = ({ isAuthenticated, setIsAuthenticated, role }) => {
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -29,8 +36,16 @@ const NavBar = () => {
     onClose();
   };
 
-  const handleHomeClick = () => {
+  const handleDashboardClick = () => {
+    navigate("/wisher-dashboard");
+    onClose();
+  };
+
+  const handleLogoutClick = () => {
+    localStorage.removeItem("token");
+    setIsAuthenticated(false);
     navigate("/");
+    onClose();
   };
 
   return (
@@ -42,45 +57,64 @@ const NavBar = () => {
       backgroundColor="#fff"
       boxShadow="sm"
     >
-      {/* Logo */}
       <Image
         src="wishome.png"
         alt="Wishome Logo"
         height={"100px"}
         width={"auto"}
-        onClick={handleHomeClick}
+        onClick={() => navigate("/")}
       />
 
-      {/* Desktop Navigation */}
       <Flex display={{ base: "none", md: "flex" }} gap={10} fontSize="lg">
-        <Button
-          variant="link"
-          color="#6d1716"
-          fontFamily="'Lato', sans-serif"
-          onClick={handleListClick}
-        >
-          LISTA
-        </Button>
-        <Button
-          variant="link"
-          color="#6d1716"
-          fontFamily="'Lato', sans-serif"
-          onClick={handleLoginClick}
-        >
-          LOGIN
-        </Button>
+        {isAuthenticated && role === "wisher" && (
+          <Button
+            variant="link"
+            color="#6d1716"
+            fontFamily="'Lato', sans-serif"
+            onClick={handleDashboardClick}
+          >
+            PAINEL
+          </Button>
+        )}
+        {isAuthenticated && (
+          <Button
+            variant="link"
+            color="#6d1716"
+            fontFamily="'Lato', sans-serif"
+            onClick={handleListClick}
+          >
+            LISTA
+          </Button>
+        )}
+        {isAuthenticated ? (
+          <Button
+            variant="link"
+            color="#6d1716"
+            fontFamily="'Lato', sans-serif"
+            onClick={handleLogoutClick}
+          >
+            SAIR
+          </Button>
+        ) : (
+          <Button
+            variant="link"
+            color="#6d1716"
+            fontFamily="'Lato', sans-serif"
+            onClick={handleLoginClick}
+          >
+            LOGIN
+          </Button>
+        )}
       </Flex>
 
-      {/* Mobile Menu (Icon) */}
       <IconButton
         display={{ base: "flex", md: "none" }}
         aria-label="Open menu"
-        icon={<FaBars />} // Usa o ícone de FaBars para o menu
+        icon={<FaBars />}
         onClick={onOpen}
         variant="outline"
       />
 
-      {/* Drawer for Mobile Navigation */}
       <Drawer isOpen={isOpen} placement="right" onClose={onClose}>
         <DrawerOverlay />
         <DrawerContent>
@@ -88,22 +122,45 @@ const NavBar = () => {
           <DrawerHeader>Menu</DrawerHeader>
           <DrawerBody>
             <VStack spacing="24px">
-              <Button
-                variant="link"
-                color="#6d1716"
-                fontFamily="'Lato', sans-serif"
-                onClick={handleListClick}
-              >
-                LISTA
-              </Button>
-              <Button
-                variant="link"
-                color="#6d1716"
-                fontFamily="'Lato', sans-serif"
-                onClick={handleLoginClick}
-              >
-                LOGIN
-              </Button>
+              {isAuthenticated && role === "wisher" && (
+                <Button
+                  variant="link"
+                  color="#6d1716"
+                  fontFamily="'Lato', sans-serif"
+                  onClick={handleDashboardClick}
+                >
+                  PAINEL
+                </Button>
+              )}
+              {isAuthenticated && (
+                <Button
+                  variant="link"
+                  color="#6d1716"
+                  fontFamily="'Lato', sans-serif"
+                  onClick={handleListClick}
+                >
+                  LISTA
+                </Button>
+              )}
+              {isAuthenticated ? (
+                <Button
+                  variant="link"
+                  color="#6d1716"
+                  fontFamily="'Lato', sans-serif"
+                  onClick={handleLogoutClick}
+                >
+                  SAIR
+                </Button>
+              ) : (
+                <Button
+                  variant="link"
+                  color="#6d1716"
+                  fontFamily="'Lato', sans-serif"
+                  onClick={handleLoginClick}
+                >
+                  LOGIN
+                </Button>
+              )}
             </VStack>
           </DrawerBody>
         </DrawerContent>

@@ -8,19 +8,24 @@ import {
   Link,
   Text,
   FormErrorMessage,
+  useToast,
 } from "@chakra-ui/react";
-import NavBar from "../../shared/components/nav-bar";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginFormInputs, LoginSchema } from "./forms/login-form";
-const LoginPage = () => {
-  const navigate = useNavigate();
 
-  // Função para lidar com esqueci a senha
-  const handleForgotPassword = () => {
-    navigate("/password-recovery");
-  };
+interface LoginPageProps {
+  setIsAuthenticated: (value: boolean) => void;
+  setUserRole: (role: string | null) => void;
+}
+
+const LoginPage: React.FC<LoginPageProps> = ({
+  setIsAuthenticated,
+  setUserRole,
+}) => {
+  const navigate = useNavigate();
+  const toast = useToast();
 
   const {
     register,
@@ -31,9 +36,53 @@ const LoginPage = () => {
   });
 
   // Função para tratar o envio do formulário
-  const onSubmit = (data: LoginFormInputs) => {
-    console.log("Dados enviados: ", data);
-    // Lógica para fazer o login
+  const onSubmit = async (data: LoginFormInputs) => {
+    try {
+      const response = await fetch("http://localhost:5000/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Erro ao fazer login");
+      }
+
+      const result = await response.json();
+      localStorage.setItem("token", result.token); // Armazena o token JWT no localStorage
+      setIsAuthenticated(true); // Atualiza o estado de autenticação
+      setUserRole(result.role); // Define o papel do usuário (wisher ou gifter)
+
+      // Exibe Toast de sucesso
+      toast({
+        title: "Login realizado com sucesso!",
+        description: "Você será redirecionado.",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
+
+      // Redireciona para a página correta com base no papel do usuário
+      if (result.role === "wisher") {
+        navigate("/wisher-dashboard");
+      } else {
+        navigate("/list");
+      }
+    } catch (error: any) {
+      console.error(error);
+
+      // Exibe Toast de erro
+      toast({
+        title: "Erro ao fazer login",
+        description: error.message || "Tente novamente.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    }
   };
 
   return (
@@ -42,8 +91,6 @@ const LoginPage = () => {
       backgroundPosition="center"
       minHeight="100vh"
     >
-      <NavBar />
-
       <Flex
         justify="center"
         align="center"
@@ -68,48 +115,36 @@ const LoginPage = () => {
             Login
           </Text>
 
-          {/* Formulário de Login */}
           <form onSubmit={handleSubmit(onSubmit)}>
-            {/* Campo de E-mail */}
             <FormControl mb="1rem" isInvalid={!!errors.email}>
-              <FormLabel
-                color="#b16831"
-                fontFamily="'Higuen Elegant Serif', serif"
-              >
+              <FormLabel color="#b16831" fontFamily="'Higuen Elegant Serif', serif">
                 e-mail
               </FormLabel>
               <Input
                 type="email"
-                {...register("email")} // Registra o campo de e-mail
+                {...register("email")}
                 borderColor="#b16831"
                 focusBorderColor="#b16831"
               />
-              {/* Exibe a mensagem de erro para o e-mail */}
               <FormErrorMessage>{errors.email?.message}</FormErrorMessage>
             </FormControl>
 
-            {/* Campo de Senha */}
             <FormControl mb="1rem" isInvalid={!!errors.password}>
-              <FormLabel
-                color="#b16831"
-                fontFamily="'Higuen Elegant Serif', serif"
-              >
+              <FormLabel color="#b16831" fontFamily="'Higuen Elegant Serif', serif">
                 senha
               </FormLabel>
               <Input
                 type="password"
-                {...register("password")} // Registra o campo de senha
+                {...register("password")}
                 borderColor="#b16831"
                 focusBorderColor="#b16831"
               />
-              {/* Exibe a mensagem de erro para a senha */}
               <FormErrorMessage>{errors.password?.message}</FormErrorMessage>
             </FormControl>
 
-            {/* Botões */}
             <Flex justify="space-between" align="center" mt="1.5rem">
               <Button
-                type="submit" // Tipo de botão de envio
+                type="submit"
                 bg="#6d1716"
                 color="white"
                 fontFamily="'Higuen Elegant Serif', serif"
@@ -120,21 +155,15 @@ const LoginPage = () => {
               <Link
                 href="#"
                 color="#6d1716"
-                fontFamily="'Higuen Elegant Serif', serif"
+                fontFamily="'Lato', sans-serif"
                 _hover={{ textDecoration: "underline" }}
-                onClick={handleForgotPassword}
               >
                 Esqueci a Senha
               </Link>
             </Flex>
           </form>
 
-          <Text
-            mt="2rem"
-            textAlign="center"
-            color="#6d1716"
-            fontFamily="'Lato', sans-serif"
-          >
+          <Text mt="2rem" textAlign="center" color="#6d1716" fontFamily="'Lato', sans-serif">
             Não tem conta?{" "}
             <Link href="/register" color="#b16831" fontWeight="bold">
               Cadastre-se

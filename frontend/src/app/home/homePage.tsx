@@ -1,5 +1,4 @@
 import { Box, Flex, Text, Image, Heading } from "@chakra-ui/react";
-import NavBar from "../../shared/components/nav-bar";
 
 const HomePage = () => {
   return (
@@ -9,7 +8,6 @@ const HomePage = () => {
       backgroundPosition="center"
       minHeight="100vh"
     >
-      <NavBar />
       <Flex
         direction={{ base: "column", md: "row" }}
         alignItems="center"

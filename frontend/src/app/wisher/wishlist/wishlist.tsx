@@ -11,7 +11,6 @@ import {
   SimpleGrid,
   Tag,
 } from "@chakra-ui/react";
-import NavBar from "../../../shared/components/nav-bar";
 import { useNavigate } from "react-router-dom";
 
 const ListStatusPage = () => {
@@ -28,9 +27,6 @@ const ListStatusPage = () => {
       backgroundPosition="center"
       minHeight="100vh"
     >
-      {/* NavBar */}
-      <NavBar />
-
       {/* Conteúdo da Página */}
       <Flex
         direction="column"
