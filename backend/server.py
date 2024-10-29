@@ -37,6 +37,85 @@ class Product(db.Model):
     gifter_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
     gifter = db.relationship("User", backref="thought_products")
 
+# Modelo de Endereço
+class Address(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    cep = db.Column(db.String(10), nullable=False)
+    street = db.Column(db.String(150), nullable=False)
+    number = db.Column(db.String(10), nullable=False)
+    complement = db.Column(db.String(50))
+    neighborhood = db.Column(db.String(100), nullable=False)
+    city = db.Column(db.String(100), nullable=False)
+    state = db.Column(db.String(2), nullable=False)
+    reference_point = db.Column(db.String(150))
+
+# Rota para obter endereço de entrega
+@app.route('/address', methods=['GET'])
+@jwt_required()
+def get_address():
+    user_identity = get_jwt_identity()
+    user = User.query.get(user_identity["id"])
+
+    # Verifica se o gifter é validado
+    if user.role == "gifter" and user.status != "validated":
+        return jsonify({"error": "Unauthorized"}), 403
+
+    address = Address.query.first()
+    if not address:
+        return jsonify({"error": "Address not found"}), 404
+
+    address_data = {
+        "cep": address.cep,
+        "street": address.street,
+        "number": address.number,
+        "complement": address.complement,
+        "neighborhood": address.neighborhood,
+        "city": address.city,
+        "state": address.state,
+        "reference_point": address.reference_point,
+    }
+    return jsonify(address_data), 200
+
+
+# Rota para adicionar o endereço de entrega (somente Wisher e somente uma vez)
+@app.route('/address', methods=['POST'])
+@jwt_required()
+def add_address():
+    user_identity = get_jwt_identity()
+
+    # Verifica se o usuário é um wisher
+    if user_identity["role"] != "wisher":
+        return jsonify({"error": "Unauthorized"}), 403
+
+    # Verifica se já existe um endereço no banco de dados
+    if Address.query.first():
+        return jsonify({"error": "Address already exists"}), 400
+
+    data = request.get_json()
+    try:
+        new_address = Address(
+            cep=data.get("cep"),
+            street=data.get("street"),
+            number=data.get("number"),
+            complement=data.get("complement"),
+            neighborhood=data.get("neighborhood"),
+            city=data.get("city"),
+            state=data.get("state"),
+            reference_point=data.get("reference_point")
+        )
+
+        # Adiciona o novo endereço ao banco de dados
+        db.session.add(new_address)
+        db.session.commit()
+
+        return jsonify({"message": "Address added successfully"}), 201
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": f"Failed to add address: {str(e)}"}), 500
+
+
+
 # Rota de cadastro para 'Gifter'
 @app.route('/register', methods=['POST'])
 def register():
