@@ -8,14 +8,77 @@ import {
   Link,
   Text,
   SimpleGrid,
+  useToast,
 } from "@chakra-ui/react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const AddProductPage = () => {
   const navigate = useNavigate();
+  const toast = useToast();
+
+  // Estados para os valores dos campos do formulário
+  const [title, setTitle] = useState("");
+  const [productLink, setProductLink] = useState("");
+  const [imageLink, setImageLink] = useState("");
+  const [price, setPrice] = useState("");
 
   const handleBackToDashboard = () => {
     navigate("/wisher-dashboard");
+  };
+
+  // Função para enviar o produto ao backend
+  const handleSaveProduct = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      toast({
+        title: "Erro",
+        description: "Usuário não autenticado",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    // Envia os dados para o backend
+    try {
+      const response = await fetch("http://localhost:5000/products", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          title,
+          product_link: productLink,
+          image_link: imageLink,
+          price,
+        }),
+      });
+
+      if (response.ok) {
+        toast({
+          title: "Produto adicionado",
+          description: "O produto foi adicionado com sucesso.",
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+        });
+        navigate("/wisher-dashboard"); // Redireciona de volta para o dashboard do wisher
+      } else {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Erro ao adicionar produto");
+      }
+    } catch (error: any) {
+      toast({
+        title: "Erro",
+        description: error.message || "Erro ao adicionar produto",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    }
   };
 
   return (
@@ -25,15 +88,12 @@ const AddProductPage = () => {
       backgroundPosition="center"
       minHeight="100vh"
     >
-
-      {/* Conteúdo da Página */}
       <Flex
         direction="column"
         alignItems="center"
         justifyContent="center"
         padding="2rem"
       >
-        {/* Título */}
         <Text
           fontSize="4xl"
           fontFamily="'Higuen Elegant Serif', serif"
@@ -43,7 +103,6 @@ const AddProductPage = () => {
           Adicionar novos produtos
         </Text>
 
-        {/* Subtítulo com link para o painel */}
         <Text
           fontSize="lg"
           fontFamily="'Lato', sans-serif"
@@ -57,7 +116,6 @@ const AddProductPage = () => {
           .
         </Text>
 
-        {/* Formulário de Adicionar Produto */}
         <Box
           bg="white"
           borderRadius="lg"
@@ -77,6 +135,8 @@ const AddProductPage = () => {
                 type="text"
                 borderColor="#b16831"
                 focusBorderColor="#b16831"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
               />
             </FormControl>
 
@@ -91,6 +151,8 @@ const AddProductPage = () => {
                 type="url"
                 borderColor="#b16831"
                 focusBorderColor="#b16831"
+                value={productLink}
+                onChange={(e) => setProductLink(e.target.value)}
               />
             </FormControl>
 
@@ -105,6 +167,8 @@ const AddProductPage = () => {
                 type="url"
                 borderColor="#b16831"
                 focusBorderColor="#b16831"
+                value={imageLink}
+                onChange={(e) => setImageLink(e.target.value)}
               />
             </FormControl>
 
@@ -119,17 +183,19 @@ const AddProductPage = () => {
                 type="text"
                 borderColor="#b16831"
                 focusBorderColor="#b16831"
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
               />
             </FormControl>
           </SimpleGrid>
 
-          {/* Botão Salvar */}
           <Flex justify="flex-end" mt="1.5rem">
             <Button
               bg="#6d1716"
               color="white"
               fontFamily="'Higuen Elegant Serif', serif"
               _hover={{ bg: "#b16831" }}
+              onClick={handleSaveProduct} // Chama a função para salvar o produto
             >
               SALVAR
             </Button>
