@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Box,
   Button,
@@ -7,8 +8,20 @@ import {
   Input,
   Text,
 } from "@chakra-ui/react";
+import { FaWhatsapp } from "react-icons/fa";
 
 const PasswordRecoveryPage = () => {
+  const [email, setEmail] = useState("");
+
+  const handleWhatsAppLink = () => {
+    // Substitui o e-mail de exemplo pelo e-mail digitado
+    const whatsappMessage = `Oi, suporte! Eu esqueci minha senha, troca pra mim? Meu email é ${encodeURIComponent(email)}`;
+    const whatsappLink = `https://wa.me/number?text=${whatsappMessage}`;
+
+    // Abre o link em uma nova aba
+    window.open(whatsappLink, "_blank");
+  };
+
   return (
     <Box
       backgroundImage="url('/background.png')" // O mesmo background que você mencionou
@@ -16,7 +29,6 @@ const PasswordRecoveryPage = () => {
       backgroundPosition="center"
       minHeight="100vh"
     >
-
       {/* Conteúdo da Página */}
       <Flex
         justify="center"
@@ -54,17 +66,20 @@ const PasswordRecoveryPage = () => {
               type="email"
               borderColor="#b16831"
               focusBorderColor="#b16831"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </FormControl>
 
           <Flex justify="center" mt="1.5rem">
             <Button
-              bg="#6d1716"
-              color="white"
+              leftIcon={<FaWhatsapp />}
+              colorScheme="green"
               fontFamily="'Higuen Elegant Serif', serif"
-              _hover={{ bg: "#b16831" }}
+              onClick={handleWhatsAppLink}
+              isDisabled={!email} // Desativa o botão se o e-mail estiver vazio
             >
-              ENVIAR
+              ENVIAR MENSAGEM PARA O SUPORTE
             </Button>
           </Flex>
         </Box>
