@@ -7,7 +7,6 @@ import {
   Input,
   Text,
 } from "@chakra-ui/react";
-import NavBar from "../../../shared/components/nav-bar";
 
 const PasswordRecoveryPage = () => {
   return (
@@ -17,8 +16,6 @@ const PasswordRecoveryPage = () => {
       backgroundPosition="center"
       minHeight="100vh"
     >
-      {/* NavBar */}
-      <NavBar />
 
       {/* Conteúdo da Página */}
       <Flex

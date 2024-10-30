@@ -18,7 +18,6 @@ import {
 } from "@chakra-ui/react";
 import { CheckIcon, CloseIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
-import NavBar from "../../../shared/components/nav-bar";
 
 const ValidateUsersPage = () => {
   const navigate = useNavigate();
@@ -64,8 +63,6 @@ const ValidateUsersPage = () => {
       backgroundPosition="center"
       minHeight="100vh"
     >
-      {/* NavBar */}
-      <NavBar />
 
       {/* Conteúdo da Página */}
       <Flex
