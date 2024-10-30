@@ -65,10 +65,17 @@ const AddProductPage = () => {
           duration: 5000,
           isClosable: true,
         });
+      
+        // Limpa os campos do formulário
+        setTitle("");
+        setProductLink("");
+        setImageLink("");
+        setPrice("");
       } else {
         const errorData = await response.json();
         throw new Error(errorData.error || "Erro ao adicionar produto");
       }
+      
     } catch (error: any) {
       toast({
         title: "Erro",
