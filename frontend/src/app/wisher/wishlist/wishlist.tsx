@@ -19,6 +19,7 @@ interface Product {
   title: string;
   status: string;
   gifter_name?: string | null; // Nome do gifter se o item estiver "comprado"
+  gifter_id?: number | null; // ID do gifter se o item estiver "comprado"
 }
 
 const ListStatusPage = () => {
@@ -49,9 +50,30 @@ const ListStatusPage = () => {
       const data = await response.json();
 
       // Filtra os produtos de acordo com o status
-      const purchasedItems = data.filter((item: Product) => item.status === "purchased" && item.gifter_name);
+      const purchasedItems = data.filter((item: Product) => item.status === "purchased"&& item.gifter_id);
       setProducts(data);
-      setPurchasedProducts(purchasedItems);
+      try {
+        const new_response = await fetch("http://localhost:5000/gifters", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (!response.ok) {
+          throw new Error("Falha ao buscar o status dos produtos");
+        }
+        const new_data = await new_response.json();
+        purchasedItems.forEach((item) => {
+          const gifter = new_data.find((gifter: any) => gifter.id === item.gifter_id);
+          if (gifter) {
+            item.gifter_name = gifter.name;
+          }
+        });
+        setPurchasedProducts(purchasedItems);
+        
+      } catch (error) {
+        console.error("Erro ao buscar os dados dos gifters:", error);
+      }
     } catch (error) {
       console.error("Erro ao buscar o status dos produtos:", error);
     }
@@ -74,7 +96,7 @@ const ListStatusPage = () => {
         </Text>
 
         <Text fontSize="lg" fontFamily="'Lato', sans-serif" color="#6d1716" mb="2rem">
-          Veja quem já comprou e quem está indeciso com os itens da sua lista!
+          Veja quem já comprou os itens da sua lista!
           <br />
           Quando terminar, volte para o{" "}
           <Text as="span" color="black" fontWeight="bold" cursor="pointer" onClick={handleBackToDashboard}>
