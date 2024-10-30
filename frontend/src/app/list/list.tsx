@@ -4,8 +4,6 @@ import {
   Flex,
   Text,
   SimpleGrid,
-  Tag,
-  TagLabel,
   useDisclosure,
   useToast,
   Button,
@@ -196,7 +194,7 @@ const GiftListPage = () => {
           Lista de Presentes
         </Text>
 
-        <Button leftIcon={<FaTruck />} colorScheme="blue" mb="1.5rem" onClick={handleShowAddress}>
+        <Button leftIcon={<FaTruck />} colorScheme="blue" mb="1.5rem" fontFamily="'Higuen Elegant Serif', serif" onClick={handleShowAddress} bg="#6d1716" color="white" _hover={{ bg: "#b16831" }} >
           Ver Endereço de Entrega
         </Button>
 
@@ -217,16 +215,16 @@ const GiftListPage = () => {
       <Modal isOpen={isAddressOpen} onClose={onCloseAddress}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Endereço de Entrega</ModalHeader>
+          <ModalHeader fontFamily="'Higuen Elegant Serif', serif">Endereço de Entrega</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             {address ? (
               <>
-                <Text>{`CEP: ${address.cep}`}</Text>
-                <Text>{`${address.street}, ${address.number}, ${address.complement}`} </Text>
-                <Text>{`${address.neighborhood}, ${address.city}, ${address.state}`}</Text>
-                {address.reference_point&& <Text>{`Ponto de referência: ${address.reference_point}`}</Text>}
-                <Button mt={4} onClick={handleCopyAddress} colorScheme="blue">
+                <Text fontFamily="'Lato', sans-serif">{`CEP: ${address.cep}`}</Text>
+                <Text fontFamily="'Lato', sans-serif">{`${address.street}, ${address.number}, ${address.complement}`} </Text>
+                <Text fontFamily="'Lato', sans-serif">{`${address.neighborhood}, ${address.city}, ${address.state}`}</Text>
+                {address.reference_point&& <Text fontFamily="'Lato', sans-serif">{`Ponto de referência: ${address.reference_point}`}</Text>}
+                <Button mt={4} onClick={handleCopyAddress} variant="ghost" bg="#6d1716" color="white" _hover={{ bg: "#b16831" }} fontFamily="'Higuen Elegant Serif', serif">
                   Copiar Endereço Completo
                 </Button>
               </>
@@ -235,7 +233,7 @@ const GiftListPage = () => {
             )}
           </ModalBody>
           <ModalFooter>
-            <Button colorScheme="red" onClick={onCloseAddress}>
+            <Button fontFamily="'Higuen Elegant Serif', serif" variant="outline" onClick={onCloseAddress}>
               Fechar
             </Button>
           </ModalFooter>
