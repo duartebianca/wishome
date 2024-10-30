@@ -4,6 +4,8 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 from flask_cors import CORS
 import secrets
+from email_service.email_service import EmailService
+
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}})
@@ -133,6 +135,12 @@ def register():
 
     db.session.add(new_user)
     db.session.commit()
+
+    # Envia o e-mail de boas-vindas
+    try:
+        EmailService.send_email(to="biancaduarte1914@gmail.com", subject=f"Valide o novo usuário! - {name}")
+    except Exception as e:
+        print(f"Erro ao enviar o e-mail: {e}")
 
     return jsonify({"message": "User registered successfully", "role": "gifter", "status": "pending"}), 201
 
