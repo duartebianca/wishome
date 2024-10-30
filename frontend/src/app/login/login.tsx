@@ -145,7 +145,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ setIsAuthenticated }) => {
                 Entrar
               </Button>
               <Link
-                href="#"
+                href="/password-recovery"
                 color="#6d1716"
                 fontFamily="'Lato', sans-serif"
                 _hover={{ textDecoration: "underline" }}
