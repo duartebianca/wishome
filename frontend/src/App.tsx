@@ -5,7 +5,6 @@ import HomePage from "./app/home/homePage";
 import SignUpPage from "./app/register/register";
 import GiftListPage from "./app/list/list";
 import PasswordRecoveryPage from "./app/password/recover/recoverPassword";
-import ResetPasswordPage from "./app/password/reset/resetPassword";
 import WisherDashboard from "./app/wisher/dashboard/wisher-dashboard";
 import AddProductPage from "./app/wisher/add-products/add-products";
 import ValidateUsersPage from "./app/wisher/validate-users/validate-users";
@@ -26,7 +25,6 @@ const App: React.FC = () => {
         <Route path="/login" element={<LoginPage setIsAuthenticated={setIsAuthenticated} />} />
         <Route path="/register" element={<SignUpPage />} />
         <Route path="/password-recovery" element={<PasswordRecoveryPage />} />
-        <Route path="/password-reset" element={<ResetPasswordPage />} />
         <Route path="/list" element={<GiftListPage />} />
 
         {userRole === "wisher" && (
