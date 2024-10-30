@@ -156,11 +156,11 @@ const GiftListPage = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-  
+
       if (!response.ok) {
         throw new Error("Erro ao deletar o produto");
       }
-  
+
       setItems((prevItems) => prevItems.filter((item) => item.id !== id));
       toast({
         title: "Item deletado com sucesso",
@@ -187,6 +187,45 @@ const GiftListPage = () => {
     onClose();
   };
 
+  const handleUpdateStatus = async (id: number, status: string) => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const response = await fetch(`http://localhost:5000/products/${id}/status`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ status }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Erro ao atualizar status do produto");
+      }
+
+      const updatedItems = items.map((item) =>
+        item.id === id ? { ...item, status } : item
+      );
+      setItems(updatedItems);
+      toast({
+        title: "Status atualizado",
+        description: `O status do produto foi atualizado para ${status}.`,
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    } catch (error) {
+      toast({
+        title: "Erro ao atualizar status",
+        description: error instanceof Error ? error.message : "Erro desconhecido",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
+
   return (
     <Box backgroundImage="url('/background.png')" backgroundSize="cover" backgroundPosition="center" minHeight="100vh">
       <Flex direction="column" alignItems="center" justifyContent="center" padding="2rem">
@@ -194,7 +233,7 @@ const GiftListPage = () => {
           Lista de Presentes
         </Text>
 
-        <Button leftIcon={<FaTruck />} colorScheme="blue" mb="1.5rem" fontFamily="'Higuen Elegant Serif', serif" onClick={handleShowAddress} bg="#6d1716" color="white" _hover={{ bg: "#b16831" }} >
+        <Button leftIcon={<FaTruck />} colorScheme="blue" mb="1.5rem" fontFamily="'Higuen Elegant Serif', serif" onClick={handleShowAddress} bg="#6d1716" color="white" _hover={{ bg: "#b16831" }}>
           Ver Endereço de Entrega
         </Button>
 
@@ -206,6 +245,7 @@ const GiftListPage = () => {
               role={localStorage.getItem("role")}
               onDelete={handleDelete}
               onEdit={handleEdit}
+              onUpdateStatus={handleUpdateStatus} // Passando a função para o GiftCard
             />
           ))}
         </SimpleGrid>
@@ -221,9 +261,9 @@ const GiftListPage = () => {
             {address ? (
               <>
                 <Text fontFamily="'Lato', sans-serif">{`CEP: ${address.cep}`}</Text>
-                <Text fontFamily="'Lato', sans-serif">{`${address.street}, ${address.number}, ${address.complement}`} </Text>
+                <Text fontFamily="'Lato', sans-serif">{`${address.street}, ${address.number}, ${address.complement}`}</Text>
                 <Text fontFamily="'Lato', sans-serif">{`${address.neighborhood}, ${address.city}, ${address.state}`}</Text>
-                {address.reference_point&& <Text fontFamily="'Lato', sans-serif">{`Ponto de referência: ${address.reference_point}`}</Text>}
+                {address.reference_point && <Text fontFamily="'Lato', sans-serif">{`Ponto de referência: ${address.reference_point}`}</Text>}
                 <Button mt={4} onClick={handleCopyAddress} variant="ghost" bg="#6d1716" color="white" _hover={{ bg: "#b16831" }} fontFamily="'Higuen Elegant Serif', serif">
                   Copiar Endereço Completo
                 </Button>

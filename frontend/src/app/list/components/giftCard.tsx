@@ -36,9 +36,10 @@ interface GiftCardProps {
   role: string | null;
   onDelete: (id: number) => void;
   onEdit: (item: Item) => void;
+  onUpdateStatus: (id: number, status: string) => void;
 }
 
-const GiftCard = ({ item, role, onDelete, onEdit }: GiftCardProps) => {
+const GiftCard = ({ item, role, onDelete, onEdit, onUpdateStatus }: GiftCardProps) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
   const chavePix = "81995115978";
@@ -62,6 +63,11 @@ const GiftCard = ({ item, role, onDelete, onEdit }: GiftCardProps) => {
     onEdit(item);
   };
 
+  const handleStatusUpdate = (status: string) => {
+    if (item.id) onUpdateStatus(item.id, status);
+    onClose();
+  };
+
   return (
     <Box
       bg="white"
@@ -73,7 +79,6 @@ const GiftCard = ({ item, role, onDelete, onEdit }: GiftCardProps) => {
       maxWidth="300px"
       position="relative"
     >
-      {/* Condicional para mostrar ícones de edição/exclusão somente para o wisher e excluir o card de Pix */}
       {role === "wisher" && item.title !== "Chave Pix" && (
         <Flex position="absolute" top="1rem" right="1rem" gap="0.5rem">
           <IconButton
@@ -95,7 +100,6 @@ const GiftCard = ({ item, role, onDelete, onEdit }: GiftCardProps) => {
         </Flex>
       )}
 
-      {/* Imagem do Presente */}
       <Image
         src={item.image}
         alt={item.title}
@@ -105,38 +109,20 @@ const GiftCard = ({ item, role, onDelete, onEdit }: GiftCardProps) => {
         objectFit="cover"
       />
 
-      {/* Nome do Item */}
-      <Text
-        fontFamily="'Higuen Elegant Serif', serif"
-        fontSize="xl"
-        color="#6d1716"
-        mb="0.5rem"
-      >
+      <Text fontFamily="'Higuen Elegant Serif', serif" fontSize="xl" color="#6d1716" mb="0.5rem">
         {item.title}
       </Text>
 
-      {/* Preço do Item */}
-      <Text
-        fontFamily="'Higuen Elegant Serif', serif"
-        fontSize="2xl"
-        color="#b16831"
-        mb="0.5rem"
-      >
+      <Text fontFamily="'Higuen Elegant Serif', serif" fontSize="2xl" color="#b16831" mb="0.5rem">
         R$ {item.price}
       </Text>
 
       {/* Status do Item */}
       <Flex align="center" justify="center" mb="1rem">
-        <Tag size="lg" colorScheme="green" borderRadius="full">
-          <Box
-            as="span"
-            bg="green.500"
-            borderRadius="full"
-            width="10px"
-            height="10px"
-            mr="0.5rem"
-          ></Box>
-          <TagLabel fontFamily="'Lato', sans-serif">DISPONÍVEL</TagLabel>
+        <Tag size="lg" colorScheme={item.status === "purchased" ? "red" : "green"} borderRadius="full">
+          <TagLabel fontFamily="'Lato', sans-serif">
+            {item.status === "purchased" ? "INDISPONÍVEL" : "DISPONÍVEL"}
+          </TagLabel>
         </Tag>
       </Flex>
 
@@ -157,7 +143,7 @@ const GiftCard = ({ item, role, onDelete, onEdit }: GiftCardProps) => {
           PIX
         </Button>
 
-        {/* Condicional: Redirecionamento para página de compra apenas se purchaseLink estiver setado */}
+        {/* Condicional: Redirecionamento para página de compra apenas se product_link estiver setado */}
         {item.product_link && (
           <Button
             as="a"
@@ -169,7 +155,7 @@ const GiftCard = ({ item, role, onDelete, onEdit }: GiftCardProps) => {
             bg="#6d1716"
             color="white"
             fontFamily="'Higuen Elegant Serif', serif"
-            leftIcon={<LinkIcon />} // Ícone de link
+            leftIcon={<LinkIcon />}
             height="30px"
             width="auto"
           >
@@ -178,23 +164,25 @@ const GiftCard = ({ item, role, onDelete, onEdit }: GiftCardProps) => {
         )}
       </Flex>
 
-      {/* Modal para exibir o QR Code */}
+      {/* Modal para exibir o QR Code e opção de compra */}
       <Modal isOpen={isOpen} onClose={onClose} isCentered>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader fontFamily="'Higuen Elegant Serif', serif">Chave PIX</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Text fontFamily={"Lato"}> Você pode escanear o QR Code ou utilizar a chave pix 81995115978. </Text>
-            {/* Botão de copiar a chave PIX */}
+            <Text fontFamily={"Lato"}> Você pode escanear o QR Code ou utilizar a chave pix {chavePix}. </Text>
             <Button mt={4} colorScheme="blue" onClick={handleCopy} fontFamily="'Higuen Elegant Serif', serif" bg="#6d1716" _hover={{ bg: "#b16831" }}>
               Copiar a chave PIX
             </Button>
             <Image src={item.qrCodeImage} alt="QR Code" width="100%" />
           </ModalBody>
           <ModalFooter>
-            <Button colorScheme="red" mr={3} onClick={onClose} fontFamily="'Higuen Elegant Serif', serif" bg="#6d1716" _hover={{ bg: "#b16831" }} >
-              Fechar
+            <Button colorScheme="green" onClick={() => handleStatusUpdate("purchased")} mr={3} fontFamily="'Higuen Elegant Serif', serif">
+              Sim, comprei!
+            </Button>
+            <Button onClick={() => handleStatusUpdate("available")} fontFamily="'Higuen Elegant Serif', serif">
+              Não, vou escolher outro
             </Button>
           </ModalFooter>
         </ModalContent>
