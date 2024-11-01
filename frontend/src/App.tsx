@@ -4,13 +4,13 @@ import NotFound from "./app/notFound/notFound";
 import HomePage from "./app/home/homePage";
 import SignUpPage from "./app/register/register";
 import GiftListPage from "./app/list/list";
-import PasswordRecoveryPage from "./app/password/recover/recoverPassword";
 import WisherDashboard from "./app/wisher/dashboard/wisher-dashboard";
 import AddProductPage from "./app/wisher/add-products/add-products";
 import ValidateUsersPage from "./app/wisher/validate-users/validate-users";
 import ListStatusPage from "./app/wisher/wishlist/wishlist";
 import NavBar from "./shared/components/nav-bar";
 import LoginPage from "./app/login/login";
+import PasswordRecoveryPage from "./app/password/recoverPassword";
 
 const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(() => !!localStorage.getItem("token"));
