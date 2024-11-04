@@ -16,10 +16,12 @@ class EmailService:
         SMTP_SERVER = "smtp.gmail.com"
         SMTP_PORT = 587
 
-        # Lê o conteúdo do HTML do e-mail
-        with open("/home/bianca/wishome/backend/email_service/email.html", "r", encoding="utf-8") as file:
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        email_template_path = os.path.join(current_dir, "email.html")
+        with open(email_template_path, "r", encoding="utf-8") as file:
             html_content = file.read()
             #print(html_content)
+
 
         # Configura a mensagem de e-mail
         msg = MIMEMultipart()
