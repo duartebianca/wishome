@@ -199,8 +199,8 @@ const GiftListPage = () => {
         },
         body: JSON.stringify({ status }),
       });
-
       if (!response.ok) {
+        console.log(response);
         throw new Error("Erro ao atualizar status do produto");
       }
 
@@ -210,11 +210,12 @@ const GiftListPage = () => {
       setItems(updatedItems);
       toast({
         title: "Status atualizado",
-        description: `O status do produto foi atualizado para ${status}.`,
+        description: status === "purchased" ? "O produto foi comprado!" : "O produto continuará disponível.",
         status: "success",
         duration: 3000,
         isClosable: true,
       });
+      
     } catch (error) {
       toast({
         title: "Erro ao atualizar status",

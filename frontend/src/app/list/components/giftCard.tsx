@@ -121,7 +121,7 @@ const GiftCard = ({ item, role, onDelete, onEdit, onUpdateStatus }: GiftCardProp
       <Flex align="center" justify="center" mb="1rem">
         <Tag size="lg" colorScheme={item.status === "purchased" ? "red" : "green"} borderRadius="full">
           <TagLabel fontFamily="'Lato', sans-serif">
-            {item.status === "purchased" ? "INDISPONÍVEL" : "DISPONÍVEL"}
+            {item.status === "purchased" ? "COMPRADO" : "DISPONÍVEL"}
           </TagLabel>
         </Tag>
       </Flex>
