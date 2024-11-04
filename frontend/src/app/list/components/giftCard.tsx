@@ -42,7 +42,12 @@ interface GiftCardProps {
 }
 
 const GiftCard = ({ item, role, onDelete, onEdit, onUpdateStatus }: GiftCardProps) => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen, onOpen, onClose } = useDisclosure(); // Modal para o botão de "PIX" dos outros cards
+  const {
+    isOpen: isPixKeyOpen,
+    onOpen: onPixKeyOpen,
+    onClose: onPixKeyClose,
+  } = useDisclosure(); // Modal específico de "Mostrar chave"
   const { isOpen: isConfirmOpen, onOpen: onConfirmOpen, onClose: onConfirmClose } = useDisclosure();
   const toast = useToast();
   const chavePix = "81995115978";
@@ -133,7 +138,6 @@ const GiftCard = ({ item, role, onDelete, onEdit, onUpdateStatus }: GiftCardProp
         R$ {item.price}
       </Text>
 
-      {/* Status do Item */}
       <Flex align="center" justify="center" mb="1rem">
         <Tag size="lg" colorScheme={item.status === "purchased" ? "red" : "green"} borderRadius="full">
           <TagLabel fontFamily="'Lato', sans-serif">
@@ -145,25 +149,38 @@ const GiftCard = ({ item, role, onDelete, onEdit, onUpdateStatus }: GiftCardProp
       {/* Botões (com Símbolos e Texto) */}
       {item.status !== "purchased" && (
         <Flex justify="space-around" mt="1rem" gap="0.3rem">
-          {/* Botão Chave PIX que abre um Modal */}
-          <Button
-            variant="ghost"
-            bg="#6d1716"
-            height="30px"
-            width="auto"
-            color="white"
-            fontFamily="'Higuen Elegant Serif', serif"
-            _hover={{ bg: "#b16831" }}
-            onClick={onOpen}
-            leftIcon={<MdPix />}
-          >
-            PIX
-          </Button>
+          {item.title === "Chave Pix" ? (
+            <Button
+              variant="ghost"
+              bg="#6d1716"
+              height="30px"
+              width="auto"
+              color="white"
+              fontFamily="'Higuen Elegant Serif', serif"
+              _hover={{ bg: "#b16831" }}
+              onClick={onPixKeyOpen}
+            >
+              Mostrar chave
+            </Button>
+          ) : (
+            <Button
+              variant="ghost"
+              bg="#6d1716"
+              height="30px"
+              width="auto"
+              color="white"
+              fontFamily="'Higuen Elegant Serif', serif"
+              _hover={{ bg: "#b16831" }}
+              onClick={onOpen}
+              leftIcon={<MdPix />}
+            >
+              PIX
+            </Button>
+          )}
 
-          {/* Condicional: Redirecionamento para página de compra apenas se product_link estiver setado */}
           {item.product_link && (
             <Button
-              onClick={onConfirmOpen} // Abrir modal de confirmação ao clicar em Loja
+              onClick={onConfirmOpen}
               _hover={{ bg: "#b16831" }}
               variant="ghost"
               bg="#6d1716"
@@ -179,25 +196,33 @@ const GiftCard = ({ item, role, onDelete, onEdit, onUpdateStatus }: GiftCardProp
         </Flex>
       )}
 
-      {/* Modal para exibir o QR Code e opção de compra */}
-      <Modal isOpen={isOpen} onClose={onClose} closeOnOverlayClick={false} isCentered>
+      {/* Modal para mostrar a chave PIX */}
+      <Modal isOpen={isPixKeyOpen} onClose={onPixKeyClose} closeOnOverlayClick={false} isCentered>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader fontFamily="'Higuen Elegant Serif', serif">Chave PIX</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Text fontFamily={"Lato"}> Você pode escanear o QR Code ou utilizar a chave pix {chavePix}. </Text>
-            <Button mt={4} colorScheme="blue" onClick={handleCopy} fontFamily="'Higuen Elegant Serif', serif" bg="#6d1716" _hover={{ bg: "#b16831" }}>
+            <Text fontFamily={"Lato"}>Você pode escanear o QR Code ou utilizar a chave pix {chavePix}.</Text>
+            <Button
+              mt={4}
+              colorScheme="blue"
+              onClick={handleCopy}
+              fontFamily="'Higuen Elegant Serif', serif"
+              bg="#6d1716"
+              _hover={{ bg: "#b16831" }}
+            >
               Copiar a chave PIX
             </Button>
             <Image src={item.qrCodeImage} alt="QR Code" width="100%" />
           </ModalBody>
           <ModalFooter>
-            <Button colorScheme="green" onClick={() => handleStatusUpdate("purchased")} mr={3} fontFamily="'Higuen Elegant Serif', serif">
-              Sim, comprei!
-            </Button>
-            <Button onClick={() => handleStatusUpdate("available")} fontFamily="'Higuen Elegant Serif', serif">
-              Não, vou escolher outro
+            <Button
+              colorScheme="green"
+              onClick={onPixKeyClose}
+              fontFamily="'Higuen Elegant Serif', serif"
+            >
+              Fechar
             </Button>
           </ModalFooter>
         </ModalContent>
@@ -213,7 +238,6 @@ const GiftCard = ({ item, role, onDelete, onEdit, onUpdateStatus }: GiftCardProp
             <Text fontFamily="'Lato', sans-serif">
               Você está prestes a sair de nossa lista! Não esqueça de voltar aqui e marcar se comprou ou não o produto quando acabar.
             </Text>
-            {/* Checkbox para marcar a compra */}
             <Checkbox
               mt={4}
               fontFamily="'Higuen Elegant Serif', serif"
@@ -245,6 +269,42 @@ const GiftCard = ({ item, role, onDelete, onEdit, onUpdateStatus }: GiftCardProp
                 Confirmar Compra
               </Button>
             </Flex>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      {/* Modal para exibir o QR Code e opção de compra para os outros cards */}
+      <Modal isOpen={isOpen} onClose={onClose} closeOnOverlayClick={false} isCentered>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader fontFamily="'Higuen Elegant Serif', serif">Detalhes do PIX</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Text fontFamily={"Lato"}>Você pode escanear o QR Code ou utilizar a chave pix {chavePix}.</Text>
+            <Button
+              mt={4}
+              colorScheme="blue"
+              onClick={handleCopy}
+              fontFamily="'Higuen Elegant Serif', serif"
+              bg="#6d1716"
+              _hover={{ bg: "#b16831" }}
+            >
+              Copiar a chave PIX
+            </Button>
+            <Image src={item.qrCodeImage} alt="QR Code" width="100%" />
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              colorScheme="green"
+              onClick={() => handleStatusUpdate("purchased")}
+              mr={3}
+              fontFamily="'Higuen Elegant Serif', serif"
+            >
+              Sim, comprei!
+            </Button>
+            <Button onClick={onClose} fontFamily="'Higuen Elegant Serif', serif">
+              Não, vou escolher outro
+            </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
