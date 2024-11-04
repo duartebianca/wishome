@@ -31,7 +31,6 @@ const LoginPage: React.FC<LoginPageProps> = ({ setIsAuthenticated }) => {
     resolver: zodResolver(LoginSchema),
   });
 
-  // Função para tratar o envio do formulário
   const onSubmit = async (data: LoginFormInputs) => {
     try {
       const response = await fetch("http://localhost:5000/login", {
@@ -49,10 +48,9 @@ const LoginPage: React.FC<LoginPageProps> = ({ setIsAuthenticated }) => {
 
       const result = await response.json();
       localStorage.setItem("token", result.token); // Armazena o token JWT no localStorage
-      localStorage.setItem("role", result.role);
+      localStorage.setItem("role", result.role); // Armazena o papel do usuário no localStorage
       setIsAuthenticated(true); // Atualiza o estado de autenticação
 
-      // Exibe Toast de sucesso
       toast({
         title: "Login realizado com sucesso!",
         description: "Você será redirecionado.",
@@ -61,16 +59,14 @@ const LoginPage: React.FC<LoginPageProps> = ({ setIsAuthenticated }) => {
         isClosable: true,
       });
 
-      // Redireciona com base no papel do usuário
       if (result.role === "wisher") {
-        navigate("/wisher-dashboard"); // Redireciona para o painel de Wishers
+        navigate("/wisher-dashboard");
       } else {
-        navigate("/list"); // Redireciona para a lista para usuários Gifter
+        navigate("/list");
       }
     } catch (error: any) {
-      console.error(error);
+      console.error("Erro ao fazer login:", error);
 
-      // Exibe Toast de erro
       toast({
         title: "Erro ao fazer login",
         description: error.message || "Tente novamente.",
@@ -149,7 +145,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ setIsAuthenticated }) => {
                 Entrar
               </Button>
               <Link
-                href="#"
+                href="/password-recovery"
                 color="#6d1716"
                 fontFamily="'Lato', sans-serif"
                 _hover={{ textDecoration: "underline" }}

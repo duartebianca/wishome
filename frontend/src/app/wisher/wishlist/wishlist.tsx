@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
   Box,
   Flex,
@@ -13,12 +14,74 @@ import {
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 
+interface Product {
+  id: number;
+  title: string;
+  status: string;
+  gifter_name?: string | null; // Nome do gifter se o item estiver "comprado"
+  gifter_id?: number | null; // ID do gifter se o item estiver "comprado"
+}
+
 const ListStatusPage = () => {
   const navigate = useNavigate();
+  const [products, setProducts] = useState<Product[]>([]);
+  const [purchasedProducts, setPurchasedProducts] = useState<Product[]>([]);
 
   const handleBackToDashboard = () => {
     navigate("/wisher-dashboard");
   };
+
+  // Função para buscar os dados do backend
+  const fetchProductStatus = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const response = await fetch("http://localhost:5000/products", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Falha ao buscar o status dos produtos");
+      }
+
+      const data = await response.json();
+
+      // Filtra os produtos de acordo com o status
+      const purchasedItems = data.filter((item: Product) => item.status === "purchased"&& item.gifter_id);
+      setProducts(data);
+      try {
+        const new_response = await fetch("http://localhost:5000/gifters", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (!response.ok) {
+          throw new Error("Falha ao buscar o status dos produtos");
+        }
+        const new_data = await new_response.json();
+        purchasedItems.forEach((item) => {
+          const gifter = new_data.find((gifter: any) => gifter.id === item.gifter_id);
+          if (gifter) {
+            item.gifter_name = gifter.name;
+          }
+        });
+        setPurchasedProducts(purchasedItems);
+        
+      } catch (error) {
+        console.error("Erro ao buscar os dados dos gifters:", error);
+      }
+    } catch (error) {
+      console.error("Erro ao buscar o status dos produtos:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchProductStatus();
+  }, []);
 
   return (
     <Box
@@ -27,153 +90,81 @@ const ListStatusPage = () => {
       backgroundPosition="center"
       minHeight="100vh"
     >
-
-      {/* Conteúdo da Página */}
-      <Flex
-        direction="column"
-        alignItems="center"
-        justifyContent="center"
-        padding="2rem"
-      >
-        {/* Título */}
-        <Text
-          fontSize="4xl"
-          fontFamily="'Higuen Elegant Serif', serif"
-          color="#6d1716"
-          mb="1rem"
-        >
+      <Flex direction="column" alignItems="center" justifyContent="center" padding="2rem">
+        <Text fontSize="4xl" fontFamily="'Higuen Elegant Serif', serif" color="#6d1716" mb="1rem">
           Status da Lista
         </Text>
 
-        {/* Subtítulo */}
-        <Text
-          fontSize="lg"
-          fontFamily="'Lato', sans-serif"
-          color="#6d1716"
-          mb="2rem"
-        >
-          Veja quem já comprou e quem está indeciso com os itens da sua lista!
+        <Text fontSize="lg" fontFamily="'Lato', sans-serif" color="#6d1716" mb="2rem">
+          Veja quem já comprou os itens da sua lista!
           <br />
           Quando terminar, volte para o{" "}
-          <Text
-            as="span"
-            color="black"
-            fontWeight="bold"
-            cursor="pointer"
-            onClick={handleBackToDashboard}
-          >
+          <Text as="span" color="black" fontWeight="bold" cursor="pointer" onClick={handleBackToDashboard}>
             painel do wisher.
           </Text>
         </Text>
 
-        {/* Tabelas */}
         <SimpleGrid columns={{ base: 1, md: 2 }} spacing={10} width="100%">
           {/* Tabela Geral */}
           <Box>
-            <Text
-              fontSize="2xl"
-              fontFamily="'Higuen Elegant Serif', serif"
-              color="#6d1716"
-              mb="1rem"
-            >
+            <Text fontSize="2xl" fontFamily="'Higuen Elegant Serif', serif" color="#6d1716" mb="1rem">
               GERAL
             </Text>
 
             <Table variant="simple" size="md" bg="white" borderRadius="lg">
               <Thead>
                 <Tr>
-                  <Th
-                    textAlign="center"
-                    fontFamily="'Higuen Elegant Serif', serif"
-                    color="#6d1716"
-                  >
+                  <Th textAlign="center" fontFamily="'Higuen Elegant Serif', serif" color="#6d1716">
                     Item
                   </Th>
-                  <Th
-                    textAlign="center"
-                    fontFamily="'Higuen Elegant Serif', serif"
-                    color="#6d1716"
-                  >
+                  <Th textAlign="center" fontFamily="'Higuen Elegant Serif', serif" color="#6d1716">
                     Status
                   </Th>
                 </Tr>
               </Thead>
               <Tbody>
-                {/* Exemplo de linha */}
-                <Tr>
-                  <Td textAlign="center">NOME DO ITEM</Td>
-                  <Td textAlign="center">
-                    <Tag colorScheme="green">DISPONÍVEL</Tag>
-                  </Td>
-                </Tr>
-                <Tr>
-                  <Td textAlign="center">NOME DO ITEM</Td>
-                  <Td textAlign="center">
-                    <Tag colorScheme="red">COMPRADO</Tag>
-                  </Td>
-                </Tr>
-                <Tr>
-                  <Td textAlign="center">NOME DO ITEM</Td>
-                  <Td textAlign="center">
-                    <Tag colorScheme="red">COMPRADO</Tag>
-                  </Td>
-                </Tr>
-                <Tr>
-                  <Td textAlign="center">NOME DO ITEM</Td>
-                  <Td textAlign="center">
-                    <Tag colorScheme="green">DISPONÍVEL</Tag>
-                  </Td>
-                </Tr>
-                {/* Adicione mais linhas conforme necessário */}
+                {products.map((product) => (
+                  <Tr key={product.id}>
+                    <Td textAlign="center">{product.title}</Td>
+                    <Td textAlign="center">
+                      <Tag colorScheme={product.status === "available" ? "green" : product.status === "thinking" ? "orange" : "red"}>
+                        {product.status === "available"
+                          ? "DISPONÍVEL"
+                          : product.status === "thinking"
+                          ? "PENSANDO"
+                          : "COMPRADO"}
+                      </Tag>
+                    </Td>
+                  </Tr>
+                ))}
               </Tbody>
             </Table>
           </Box>
 
           {/* Tabela de Quem Comprou */}
           <Box>
-            <Text
-              fontSize="2xl"
-              fontFamily="'Higuen Elegant Serif', serif"
-              color="#6d1716"
-              mb="1rem"
-            >
+            <Text fontSize="2xl" fontFamily="'Higuen Elegant Serif', serif" color="#6d1716" mb="1rem">
               QUEM COMPROU
             </Text>
 
             <Table variant="simple" size="md" bg="white" borderRadius="lg">
               <Thead>
                 <Tr>
-                  <Th
-                    textAlign="center"
-                    fontFamily="'Higuen Elegant Serif', serif"
-                    color="#6d1716"
-                  >
+                  <Th textAlign="center" fontFamily="'Higuen Elegant Serif', serif" color="#6d1716">
                     Item
                   </Th>
-                  <Th
-                    textAlign="center"
-                    fontFamily="'Higuen Elegant Serif', serif"
-                    color="#6d1716"
-                  >
+                  <Th textAlign="center" fontFamily="'Higuen Elegant Serif', serif" color="#6d1716">
                     Nome
                   </Th>
                 </Tr>
               </Thead>
               <Tbody>
-                {/* Exemplo de linha */}
-                <Tr>
-                  <Td textAlign="center">NOME DO ITEM</Td>
-                  <Td textAlign="center">MARIA SILVA</Td>
-                </Tr>
-                <Tr>
-                  <Td textAlign="center">NOME DO ITEM</Td>
-                  <Td textAlign="center">MARIA SILVA</Td>
-                </Tr>
-                <Tr>
-                  <Td textAlign="center">NOME DO ITEM</Td>
-                  <Td textAlign="center">MARIA SILVA</Td>
-                </Tr>
-                {/* Adicione mais linhas conforme necessário */}
+                {purchasedProducts.map((product) => (
+                  <Tr key={product.id}>
+                    <Td textAlign="center">{product.title}</Td>
+                    <Td textAlign="center">{product.gifter_name || "Anônimo"}</Td>
+                  </Tr>
+                ))}
               </Tbody>
             </Table>
           </Box>

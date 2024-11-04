@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Box,
   Button,
@@ -19,30 +19,102 @@ import {
 import { CheckIcon, CloseIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
 
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  phone: string;
+}
+
 const ValidateUsersPage = () => {
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure(); // Controla o modal de confirmação
+  const [users, setUsers] = useState<User[]>([]);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [modalType, setModalType] = useState<"accept" | "reject">(); // Controla se o modal é de aceitar ou rejeitar
   const toast = useToast();
+
+  useEffect(() => {
+    // Função para buscar os usuários pendentes de validação
+    const fetchUsers = async () => {
+      const token = localStorage.getItem("token");
+
+      const response = await fetch("http://localhost:5000/pending-users", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setUsers(data);
+      } else {
+        toast({
+          title: "Erro",
+          description: "Falha ao buscar usuários pendentes",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      }
+    };
+
+    fetchUsers();
+  }, [toast]);
 
   const handleBackToDashboard = () => {
     navigate("/wisher-dashboard");
   };
 
-  const handleConfirmAction = () => {
-    // Lógica de confirmação de ação (aceitar ou rejeitar usuário)
-    if (modalType === "accept") {
-      toast({
-        title: "Usuário validado!",
-        description: "Essa pessoa agora pode visualizar o seu endereço.",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
+  const handleConfirmAction = async () => {
+    if (!selectedUser) return;
+  
+    const token = localStorage.getItem("token");
+  
+    // Define URL e método conforme o tipo de ação
+    const url = `http://localhost:5000/users/${selectedUser.id}/${
+      modalType === "accept" ? "validate" : "reject"
+    }`;
+    const method = modalType === "accept" ? "PATCH" : "DELETE";  // Usa DELETE para rejeitar
+  
+    try {
+      const response = await fetch(url, {
+        method: method,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
-    } else {
+  
+      if (response.ok) {
+        toast({
+          title:
+            modalType === "accept"
+              ? "Usuário validado!"
+              : "Usuário rejeitado!",
+          description:
+            modalType === "accept"
+              ? "Essa pessoa agora pode visualizar o seu endereço."
+              : "Esse usuário deverá recriar o cadastro.",
+          status: modalType === "accept" ? "success" : "error",
+          duration: 3000,
+          isClosable: true,
+        });
+  
+        // Remove o usuário da lista de pendentes
+        setUsers((prevUsers) =>
+          prevUsers.filter((user) => user.id !== selectedUser.id)
+        );
+      } else {
+        throw new Error("Erro na operação com o usuário");
+      }
+    } catch (error) {
       toast({
-        title: "Usuário rejeitado!",
-        description: "Esse usuário deverá recriar o cadastro.",
+        title: "Erro",
+        description:
+          modalType === "accept"
+            ? "Falha ao validar usuário."
+            : "Falha ao rejeitar usuário.",
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -50,12 +122,13 @@ const ValidateUsersPage = () => {
     }
     onClose();
   };
-
-  const openModal = (type: "accept" | "reject") => {
+  
+  const openModal = (type: "accept" | "reject", user: User) => {
     setModalType(type);
+    setSelectedUser(user);
     onOpen();
   };
-
+  
   return (
     <Box
       backgroundImage="url('/background.png')"
@@ -63,120 +136,63 @@ const ValidateUsersPage = () => {
       backgroundPosition="center"
       minHeight="100vh"
     >
-
-      {/* Conteúdo da Página */}
-      <Flex
-        direction="column"
-        alignItems="center"
-        justifyContent="center"
-        padding="2rem"
-      >
-        {/* Título */}
-        <Text
-          fontSize="4xl"
-          fontFamily="'Higuen Elegant Serif', serif"
-          color="#6d1716"
-          mb="1rem"
-        >
+      <Flex direction="column" alignItems="center" justifyContent="center" padding="2rem">
+        <Text fontSize="4xl" fontFamily="'Higuen Elegant Serif', serif" color="#6d1716" mb="1rem">
           Validar Usuários
         </Text>
 
-        {/* Subtítulo com link para o painel */}
-        <Text
-          fontSize="lg"
-          fontFamily="'Lato', sans-serif"
-          color="#6d1716"
-          mb="2rem"
-        >
-          Para segurança do seu endereço, valide somente os usuários que você
-          realmente conhece! <br />
+        <Text fontSize="lg" fontFamily="'Lato', sans-serif" color="#6d1716" mb="2rem">
+          Para segurança do seu endereço, valide somente os usuários que você realmente conhece! <br />
           Quando terminar, volte para o{" "}
-          <Text
-            as="span"
-            color="black"
-            fontWeight="bold"
-            cursor="pointer"
-            onClick={handleBackToDashboard}
-          >
+          <Text as="span" color="black" fontWeight="bold" cursor="pointer" onClick={handleBackToDashboard}>
             painel do wisher.
           </Text>
         </Text>
 
-        {/* Tabela de Usuários */}
-        <Box
-          bg="white"
-          borderRadius="lg"
-          boxShadow="md"
-          padding="2rem"
-          width="100%"
-          maxWidth="800px"
-        >
+        <Box bg="white" borderRadius="lg" boxShadow="md" padding="2rem" width="100%" maxWidth="800px">
           <SimpleGrid columns={4} spacing={4} mb="1rem">
-            <Text
-              color="white"
-              bg="#6d1716"
-              textAlign="center"
-              p="0.5rem"
-              fontFamily="'Higuen Elegant Serif', serif"
-            >
+            <Text color="white" bg="#6d1716" textAlign="center" p="0.5rem" fontFamily="'Higuen Elegant Serif', serif">
               Nome
             </Text>
-            <Text
-              color="white"
-              bg="#6d1716"
-              textAlign="center"
-              p="0.5rem"
-              fontFamily="'Higuen Elegant Serif', serif"
-            >
+            <Text color="white" bg="#6d1716" textAlign="center" p="0.5rem" fontFamily="'Higuen Elegant Serif', serif">
               E-mail
             </Text>
-            <Text
-              color="white"
-              bg="#6d1716"
-              textAlign="center"
-              fontFamily="'Higuen Elegant Serif', serif"
-              p="0.5rem"
-            >
+            <Text color="white" bg="#6d1716" textAlign="center" fontFamily="'Higuen Elegant Serif', serif" p="0.5rem">
               Telefone
             </Text>
-            <Text
-              color="white"
-              bg="#6d1716"
-              textAlign="center"
-              p="0.5rem"
-              fontFamily="'Higuen Elegant Serif', serif"
-            >
+            <Text color="white" bg="#6d1716" textAlign="center" p="0.5rem" fontFamily="'Higuen Elegant Serif', serif">
               Validar
             </Text>
           </SimpleGrid>
 
-          {/* Exemplo de linha de usuário */}
-          <SimpleGrid columns={4} spacing={4}>
-            <Text textAlign="center" p="0.5rem" bg="#b16831" color="white">
-              Vovó Juju
-            </Text>
-            <Text textAlign="center" p="0.5rem" bg="#b16831" color="white">
-              juju@mail.com
-            </Text>
-            <Text textAlign="center" p="0.5rem" bg="#b16831" color="white">
-              87234919424
-            </Text>
-            <Flex justify="center" align="center">
-              <IconButton
-                aria-label="Confirmar"
-                icon={<CheckIcon />}
-                colorScheme="green"
-                onClick={() => openModal("accept")}
-                mr="0.5rem"
-              />
-              <IconButton
-                aria-label="Rejeitar"
-                icon={<CloseIcon />}
-                colorScheme="red"
-                onClick={() => openModal("reject")}
-              />
-            </Flex>
-          </SimpleGrid>
+          {users.map((user) => (
+            <SimpleGrid columns={4} spacing={4} key={user.id}>
+              <Text textAlign="center" p="0.5rem" bg="#b16831" color="white">
+                {user.name}
+              </Text>
+              <Text textAlign="center" p="0.5rem" bg="#b16831" color="white">
+                {user.email}
+              </Text>
+              <Text textAlign="center" p="0.5rem" bg="#b16831" color="white">
+                {user.phone}
+              </Text>
+              <Flex justify="center" align="center">
+                <IconButton
+                  aria-label="Confirmar"
+                  icon={<CheckIcon />}
+                  colorScheme="green"
+                  onClick={() => openModal("accept", user)}
+                  mr="0.5rem"
+                />
+                <IconButton
+                  aria-label="Rejeitar"
+                  icon={<CloseIcon />}
+                  colorScheme="red"
+                  onClick={() => openModal("reject", user)}
+                />
+              </Flex>
+            </SimpleGrid>
+          ))}
         </Box>
       </Flex>
 
@@ -185,9 +201,7 @@ const ValidateUsersPage = () => {
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>
-            {modalType === "accept"
-              ? "Confirmar Validação"
-              : "Rejeitar Usuário"}
+            {modalType === "accept" ? "Confirmar Validação" : "Rejeitar Usuário"}
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody>

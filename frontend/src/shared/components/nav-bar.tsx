@@ -19,7 +19,7 @@ import { useEffect } from "react";
 interface NavBarProps {
   isAuthenticated: boolean;
   setIsAuthenticated: (value: boolean) => void;
-  role: string | null; // Novo campo adicionado
+  role?: string | null; // role agora está incluído como opcional
 }
 
 const NavBar: React.FC<NavBarProps> = ({ isAuthenticated, setIsAuthenticated, role }) => {
@@ -43,6 +43,7 @@ const NavBar: React.FC<NavBarProps> = ({ isAuthenticated, setIsAuthenticated, ro
 
   const handleLogoutClick = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("role");
     setIsAuthenticated(false);
     navigate("/");
     onClose();
