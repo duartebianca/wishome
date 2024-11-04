@@ -19,9 +19,12 @@ const HomePage = () => {
         <Image
           src="/house3d.png"
           alt="3D House"
-          height={"380px"}
-          width={"auto"}
+          height={{ base: "auto", md: "380px" }}
+          maxHeight="380px"
+          width="100%"
+          objectFit="contain"
         />
+
 
         {/* Texto à direita */}
         <Box textAlign={{ base: "center", md: "left" }} maxWidth="600px">
@@ -61,8 +64,8 @@ const HomePage = () => {
             gap={6}
             justifyContent={{ base: "center", md: "flex-start" }}
           >
-            <Image src="duda.png" height={20} width={"auto"} />
-            <Image src="gustavo.png" height={20} width={"auto"} />
+            <Image src="duda.png" height={'40px'} width={"auto"} />
+            <Image src="gustavo.png" height={'40px'} width={"auto"} />
           </Box>
         </Box>
       </Flex>
