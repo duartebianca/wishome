@@ -16,10 +16,12 @@ import {
   ModalBody,
   ModalFooter,
   useToast,
+  Checkbox,
 } from "@chakra-ui/react";
 import { LinkIcon } from "@chakra-ui/icons";
 import { MdPix, MdDeleteForever } from "react-icons/md";
 import { HiPencilAlt } from "react-icons/hi";
+import { useState } from "react";
 
 interface Item {
   id?: number;
@@ -41,9 +43,11 @@ interface GiftCardProps {
 
 const GiftCard = ({ item, role, onDelete, onEdit, onUpdateStatus }: GiftCardProps) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen: isConfirmOpen, onOpen: onConfirmOpen, onClose: onConfirmClose } = useDisclosure();
   const toast = useToast();
   const chavePix = "81995115978";
-  
+  const [isPurchasedChecked, setIsPurchasedChecked] = useState(false);
+
   const handleCopy = () => {
     navigator.clipboard.writeText(chavePix);
     toast({
@@ -64,8 +68,20 @@ const GiftCard = ({ item, role, onDelete, onEdit, onUpdateStatus }: GiftCardProp
   };
 
   const handleStatusUpdate = (status: string) => {
-    if (item.id) onUpdateStatus(item.id, status);
+    if (item.id) {
+      onUpdateStatus(item.id, status);
+      if (item.title === "Chave Pix" && status === "purchased") {
+        toast({
+          title: "Compra registrada",
+          description: "O Wisher poderá ver que a chave PIX foi comprada.",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+      }
+    }
     onClose();
+    onConfirmClose();
   };
 
   return (
@@ -127,45 +143,44 @@ const GiftCard = ({ item, role, onDelete, onEdit, onUpdateStatus }: GiftCardProp
       </Flex>
 
       {/* Botões (com Símbolos e Texto) */}
-      <Flex justify="space-around" mt="1rem" gap="0.3rem">
-        {/* Botão Chave PIX que abre um Modal */}
-        <Button
-          variant="ghost"
-          bg="#6d1716"
-          height="30px"
-          width="auto"
-          color="white"
-          fontFamily="'Higuen Elegant Serif', serif"
-          _hover={{ bg: "#b16831" }}
-          onClick={onOpen}
-          leftIcon={<MdPix />}
-        >
-          PIX
-        </Button>
-
-        {/* Condicional: Redirecionamento para página de compra apenas se product_link estiver setado */}
-        {item.product_link && (
+      {item.status !== "purchased" && (
+        <Flex justify="space-around" mt="1rem" gap="0.3rem">
+          {/* Botão Chave PIX que abre um Modal */}
           <Button
-            as="a"
-            href={item.product_link}
-            target="_blank"
-            _hover={{ bg: "#b16831" }}
-            rel="noopener noreferrer"
             variant="ghost"
             bg="#6d1716"
-            color="white"
-            fontFamily="'Higuen Elegant Serif', serif"
-            leftIcon={<LinkIcon />}
             height="30px"
             width="auto"
+            color="white"
+            fontFamily="'Higuen Elegant Serif', serif"
+            _hover={{ bg: "#b16831" }}
+            onClick={onOpen}
+            leftIcon={<MdPix />}
           >
-            Loja
+            PIX
           </Button>
-        )}
-      </Flex>
+
+          {/* Condicional: Redirecionamento para página de compra apenas se product_link estiver setado */}
+          {item.product_link && (
+            <Button
+              onClick={onConfirmOpen} // Abrir modal de confirmação ao clicar em Loja
+              _hover={{ bg: "#b16831" }}
+              variant="ghost"
+              bg="#6d1716"
+              color="white"
+              fontFamily="'Higuen Elegant Serif', serif"
+              leftIcon={<LinkIcon />}
+              height="30px"
+              width="auto"
+            >
+              Loja
+            </Button>
+          )}
+        </Flex>
+      )}
 
       {/* Modal para exibir o QR Code e opção de compra */}
-      <Modal isOpen={isOpen} onClose={onClose} isCentered>
+      <Modal isOpen={isOpen} onClose={onClose} closeOnOverlayClick={false} isCentered>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader fontFamily="'Higuen Elegant Serif', serif">Chave PIX</ModalHeader>
@@ -184,6 +199,52 @@ const GiftCard = ({ item, role, onDelete, onEdit, onUpdateStatus }: GiftCardProp
             <Button onClick={() => handleStatusUpdate("available")} fontFamily="'Higuen Elegant Serif', serif">
               Não, vou escolher outro
             </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      {/* Modal de confirmação para redirecionamento à loja */}
+      <Modal isOpen={isConfirmOpen} onClose={onConfirmClose} closeOnOverlayClick={false}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader fontFamily="'Higuen Elegant Serif', serif">Confirmação de Redirecionamento</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Text fontFamily="'Lato', sans-serif">
+              Você está prestes a sair de nossa lista! Não esqueça de voltar aqui e marcar se comprou ou não o produto quando acabar.
+            </Text>
+            {/* Checkbox para marcar a compra */}
+            <Checkbox
+              mt={4}
+              fontFamily="'Higuen Elegant Serif', serif"
+              colorScheme="green"
+              isChecked={isPurchasedChecked}
+              onChange={(e) => setIsPurchasedChecked(e.target.checked)}
+            >
+              Sim, comprei!
+            </Checkbox>
+          </ModalBody>
+          <ModalFooter>
+            <Flex width="100%" direction="column" gap="0.5rem">
+              <Button
+                as="a"
+                href={item.product_link}
+                target="_blank"
+                rel="noopener noreferrer"
+                colorScheme="blue"
+                fontFamily="'Higuen Elegant Serif', serif"
+              >
+                Continuar para Loja
+              </Button>
+              <Button
+                colorScheme="green"
+                onClick={() => isPurchasedChecked && handleStatusUpdate("purchased")}
+                fontFamily="'Higuen Elegant Serif', serif"
+                isDisabled={!isPurchasedChecked}
+              >
+                Confirmar Compra
+              </Button>
+            </Flex>
           </ModalFooter>
         </ModalContent>
       </Modal>
