@@ -53,18 +53,34 @@ const NavBar: React.FC<NavBarProps> = ({ isAuthenticated, setIsAuthenticated, ro
       as="nav"
       justifyContent="space-between"
       alignItems="center"
-      padding="1.5rem 2rem"
+      padding={{ base: "1rem", md: "1.5rem 2rem" }}
       backgroundColor="#fff"
       boxShadow="sm"
+      position="relative"
     >
       <Image
         src="wishome.png"
         alt="Wishome Logo"
-        height={"100px"}
-        width={"auto"}
+        height={{ base: "60px", md: "100px" }}
+        width="auto"
         onClick={() => navigate("/")}
+        cursor="pointer"
       />
 
+      {/* Botão de Menu para dispositivos menores */}
+      <IconButton
+        display={{ base: "flex", md: "none" }}
+        aria-label="Open menu"
+        icon={<FaBars />}
+        onClick={onOpen}
+        variant="outline"
+        position="absolute"
+        right="1rem"
+        top="50%"
+        transform="translateY(-50%)"
+      />
+
+      {/* Links de navegação para dispositivos maiores */}
       <Flex display={{ base: "none", md: "flex" }} gap={10} fontSize="lg">
         {isAuthenticated && role === "wisher" && (
           <Button
@@ -107,14 +123,7 @@ const NavBar: React.FC<NavBarProps> = ({ isAuthenticated, setIsAuthenticated, ro
         )}
       </Flex>
 
-      <IconButton
-        display={{ base: "flex", md: "none" }}
-        aria-label="Open menu"
-        icon={<FaBars />}
-        onClick={onOpen}
-        variant="outline"
-      />
-
+      {/* Drawer para menu mobile */}
       <Drawer isOpen={isOpen} placement="right" onClose={onClose}>
         <DrawerOverlay />
         <DrawerContent>
