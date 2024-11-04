@@ -52,6 +52,7 @@ const GiftCard = ({ item, role, onDelete, onEdit, onUpdateStatus }: GiftCardProp
   const toast = useToast();
   const chavePix = "81995115978";
   const [isPurchasedChecked, setIsPurchasedChecked] = useState(false);
+  const [isPixChecked, setIsPixChecked] = useState(false);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(chavePix);
@@ -71,6 +72,46 @@ const GiftCard = ({ item, role, onDelete, onEdit, onUpdateStatus }: GiftCardProp
   const handleEdit = () => {
     onEdit(item);
   };
+  const handlePixConfirmation = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      console.log(token);
+      const response = await fetch("http://localhost:5000/products/pix", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          title: "Chave PIX",
+          gifter_id: localStorage.getItem("user_id"), // Substitua pelo método correto de obter o ID do usuário
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Erro ao registrar o envio do PIX");
+      }
+
+      toast({
+        title: "Obrigado por confirmar!",
+        description: "O envio do PIX foi registrado.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+
+      onPixKeyClose();
+    } catch (error) {
+      toast({
+        title: "Erro",
+        description: "Não foi possível registrar o envio do PIX.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
+
 
   const handleStatusUpdate = (status: string) => {
     if (item.id) {
@@ -203,7 +244,9 @@ const GiftCard = ({ item, role, onDelete, onEdit, onUpdateStatus }: GiftCardProp
           <ModalHeader fontFamily="'Higuen Elegant Serif', serif">Chave PIX</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Text fontFamily={"Lato"}>Você pode escanear o QR Code ou utilizar a chave pix {chavePix}.</Text>
+            <Text fontFamily={"Lato"}>
+              Você pode escanear o QR Code ou utilizar a chave pix {chavePix}.
+            </Text>
             <Button
               mt={4}
               colorScheme="blue"
@@ -215,13 +258,26 @@ const GiftCard = ({ item, role, onDelete, onEdit, onUpdateStatus }: GiftCardProp
               Copiar a chave PIX
             </Button>
             <Image src={item.qrCodeImage} alt="QR Code" width="100%" />
+
+            <Checkbox
+              mt={4}
+              isChecked={isPixChecked}
+              onChange={(e) => setIsPixChecked(e.target.checked)}
+              fontFamily="'Lato', sans-serif"
+            >
+              Sim, fiz um PIX
+            </Checkbox>
           </ModalBody>
           <ModalFooter>
             <Button
               colorScheme="green"
-              onClick={onPixKeyClose}
+              onClick={handlePixConfirmation}
               fontFamily="'Higuen Elegant Serif', serif"
+              isDisabled={!isPixChecked}
             >
+              Confirmar
+            </Button>
+            <Button onClick={onPixKeyClose} fontFamily="'Higuen Elegant Serif', serif">
               Fechar
             </Button>
           </ModalFooter>
