@@ -1,6 +1,13 @@
-import { Box, Flex, Text, Image, Heading } from "@chakra-ui/react";
+import { Box, Flex, Text, Image, Heading, Button } from "@chakra-ui/react";
+import { useNavigate } from "react-router-dom";
 
 const HomePage = () => {
+  const navigate = useNavigate();
+
+  const handleCreateAccount = () => {
+    navigate("/register"); // Redireciona para a página de criação de conta
+  };
+
   return (
     <Box
       backgroundImage="url('/background.png')"
@@ -24,7 +31,6 @@ const HomePage = () => {
           width="100%"
           objectFit="contain"
         />
-
 
         {/* Texto à direita */}
         <Box textAlign={{ base: "center", md: "left" }} maxWidth="600px">
@@ -59,14 +65,42 @@ const HomePage = () => {
             <br />
             Qualquer dúvida, só falar com a gente!
           </Text>
+
+          {/* Assinaturas */}
           <Box
             display="flex"
             gap={6}
             justifyContent={{ base: "center", md: "flex-start" }}
+            mb={4}
           >
-            <Image src="duda.png" height={'40px'} width={"auto"} />
-            <Image src="gustavo.png" height={'40px'} width={"auto"} />
+            <Image src="duda.png" height={"40px"} width={"auto"} />
+            <Image src="gustavo.png" height={"40px"} width={"auto"} />
           </Box>
+
+          {/* Botão Criar Conta */}
+          <Text
+            fontSize="xl"
+            fontFamily="'Higuen Elegant Serif', serif"
+            color="#6d1716"
+            textAlign={{ base: "center", md: "left" }}
+            mb={2}
+          >
+            Agora, vamos começar!
+          </Text>
+          <Button
+            mt="1rem"
+            colorScheme="blue"
+            size="lg"
+            fontFamily="'Higuen Elegant Serif', serif"
+            bg="#6d1716"
+            color="white"
+            _hover={{ bg: "#b16831" }}
+            onClick={handleCreateAccount}
+            display="block"
+            mx={{ base: "auto", md: "0" }}
+          >
+            CRIAR CONTA
+          </Button>
         </Box>
       </Flex>
     </Box>
