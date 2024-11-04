@@ -70,6 +70,10 @@ const PasswordRecoveryPage = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
+            <Text fontSize="sm" color="gray.500" mt="0.5rem" fontFamily={'Lato'}>
+              Se não lembrar do email, pode ser outra informação, como seu nome e sobrenome.
+              O importante é que o suporte consiga te identificar.
+            </Text>
           </FormControl>
 
           <Flex justify="center" mt="1.5rem">
@@ -80,7 +84,7 @@ const PasswordRecoveryPage = () => {
               onClick={handleWhatsAppLink}
               isDisabled={!email} // Desativa o botão se o e-mail estiver vazio
             >
-              ENVIAR MENSAGEM PARA O SUPORTE
+              FALAR COM SUPORTE
             </Button>
           </Flex>
         </Box>
