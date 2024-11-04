@@ -22,7 +22,6 @@ import { useNavigate } from "react-router-dom";
 interface User {
   id: number;
   name: string;
-  email: string;
   phone: string;
 }
 
@@ -150,28 +149,23 @@ const ValidateUsersPage = () => {
         </Text>
 
         <Box bg="white" borderRadius="lg" boxShadow="md" padding="2rem" width="100%" maxWidth="800px">
-          <SimpleGrid columns={4} spacing={4} mb="1rem">
-            <Text color="white" bg="#6d1716" textAlign="center" p="0.5rem" fontFamily="'Higuen Elegant Serif', serif">
-              Nome
-            </Text>
-            <Text color="white" bg="#6d1716" textAlign="center" p="0.5rem" fontFamily="'Higuen Elegant Serif', serif">
-              E-mail
-            </Text>
-            <Text color="white" bg="#6d1716" textAlign="center" fontFamily="'Higuen Elegant Serif', serif" p="0.5rem">
-              Telefone
-            </Text>
-            <Text color="white" bg="#6d1716" textAlign="center" p="0.5rem" fontFamily="'Higuen Elegant Serif', serif">
-              Validar
-            </Text>
-          </SimpleGrid>
+        <SimpleGrid columns={3} spacing={4} mb="1rem">
+        <Text color="white" bg="#6d1716" textAlign="center" py="1rem" fontFamily="'Higuen Elegant Serif', serif">
+          Nome
+        </Text>
+        <Text color="white" bg="#6d1716" textAlign="center" py="1rem" fontFamily="'Higuen Elegant Serif', serif">
+          Telefone
+        </Text>
+        <Text color="white" bg="#6d1716" textAlign="center" py="1rem" fontFamily="'Higuen Elegant Serif', serif">
+          Validar
+        </Text>
+      </SimpleGrid>
+
 
           {users.map((user) => (
-            <SimpleGrid columns={4} spacing={4} key={user.id}>
+            <SimpleGrid columns={3} spacing={4} key={user.id} marginY="0.3rem">
               <Text textAlign="center" p="0.5rem" bg="#b16831" color="white">
                 {user.name}
-              </Text>
-              <Text textAlign="center" p="0.5rem" bg="#b16831" color="white">
-                {user.email}
               </Text>
               <Text textAlign="center" p="0.5rem" bg="#b16831" color="white">
                 {user.phone}
