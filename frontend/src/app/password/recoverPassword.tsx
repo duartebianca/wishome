@@ -16,7 +16,8 @@ const PasswordRecoveryPage = () => {
   const handleWhatsAppLink = () => {
     // Substitui o e-mail de exemplo pelo e-mail digitado
     const whatsappMessage = `Oi, suporte! Eu esqueci minha senha, troca pra mim? Meu email é ${encodeURIComponent(email)}`;
-    const whatsappLink = `https://wa.me/number?text=${whatsappMessage}`;
+    const whatsappNumber = import.meta.env.VITE_WHATSAPP_NUMBER;
+    const whatsappLink = `https://wa.me/${whatsappNumber}?text=${whatsappMessage}`;
 
     // Abre o link em uma nova aba
     window.open(whatsappLink, "_blank");
