@@ -14,7 +14,6 @@ import {
 } from "@chakra-ui/react";
 import { FaBars } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
 
 interface NavBarProps {
   isAuthenticated: boolean;
