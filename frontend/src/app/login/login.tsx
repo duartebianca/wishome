@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Box,
   Button,
@@ -8,8 +9,11 @@ import {
   Link,
   Text,
   FormErrorMessage,
+  InputGroup,
+  InputRightElement,
   useToast,
 } from "@chakra-ui/react";
+import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -22,6 +26,7 @@ interface LoginPageProps {
 const LoginPage: React.FC<LoginPageProps> = ({ setIsAuthenticated }) => {
   const navigate = useNavigate();
   const toast = useToast();
+  const [showPassword, setShowPassword] = useState(false);
 
   const {
     register,
@@ -125,12 +130,28 @@ const LoginPage: React.FC<LoginPageProps> = ({ setIsAuthenticated }) => {
               <FormLabel color="#b16831" fontFamily="'Higuen Elegant Serif', serif">
                 senha
               </FormLabel>
-              <Input
-                type="password"
-                {...register("password")}
-                borderColor="#b16831"
-                focusBorderColor="#b16831"
-              />
+              <InputGroup>
+                <Input
+                  type={showPassword ? "text" : "password"}
+                  {...register("password")}
+                  borderColor="#b16831"
+                  focusBorderColor="#b16831"
+                />
+                <InputRightElement width="4.5rem">
+                  <Button
+                    h="1.75rem"
+                    size="sm"
+                    onClick={() => setShowPassword(!showPassword)}
+                    variant="ghost"
+                  >
+                    {showPassword ? (
+                      <ViewOffIcon color="#b16831" />
+                    ) : (
+                      <ViewIcon color="#b16831" />
+                    )}
+                  </Button>
+                </InputRightElement>
+              </InputGroup>
               <FormErrorMessage>{errors.password?.message}</FormErrorMessage>
             </FormControl>
 
