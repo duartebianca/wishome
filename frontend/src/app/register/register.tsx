@@ -8,6 +8,8 @@ import {
   FormControl,
   FormLabel,
   Input,
+  InputGroup,
+  InputRightElement,
   Text,
   SimpleGrid,
   List,
@@ -16,7 +18,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { RegisterFormInputs, RegisterSchema } from "./forms/register-form";
-import { CheckCircleIcon, SmallCloseIcon } from "@chakra-ui/icons";
+import { CheckCircleIcon, SmallCloseIcon, ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom"; // Importando o hook de navegação
 
 const SignUpPage = () => {
@@ -34,6 +36,9 @@ const SignUpPage = () => {
     hasNumber: false,
     hasSpecialChar: false,
   });
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const toast = useToast();
   const navigate = useNavigate(); // Hook de navegação
@@ -109,7 +114,6 @@ const SignUpPage = () => {
       backgroundPosition="center"
       minHeight="100vh"
     >
-
       <Flex
         justify="center"
         align="center"
@@ -199,15 +203,27 @@ const SignUpPage = () => {
                 >
                   Senha
                 </FormLabel>
-                <Input
-                  type="password"
-                  borderColor="#b16831"
-                  focusBorderColor="#b16831"
-                  {...register("password")}
-                  onChange={(e) => {
-                    updateRequirements(e.target.value);
-                  }}
-                />
+                <InputGroup>
+                  <Input
+                    type={showPassword ? "text" : "password"}
+                    borderColor="#b16831"
+                    focusBorderColor="#b16831"
+                    {...register("password")}
+                    onChange={(e) => {
+                      updateRequirements(e.target.value);
+                    }}
+                  />
+                  <InputRightElement width="4.5rem">
+                    <Button
+                      h="1.75rem"
+                      size="sm"
+                      onClick={() => setShowPassword(!showPassword)}
+                      variant="ghost"
+                    >
+                      {showPassword ?<ViewOffIcon color="#b16831"/> : <ViewIcon color="#b16831" />}
+                    </Button>
+                  </InputRightElement>
+                </InputGroup>
                 {errors.password && (
                   <Text color="red.500">{errors.password.message}</Text>
                 )}
@@ -220,12 +236,24 @@ const SignUpPage = () => {
                 >
                   Repetir senha
                 </FormLabel>
-                <Input
-                  type="password"
-                  borderColor="#b16831"
-                  focusBorderColor="#b16831"
-                  {...register("confirmPassword")}
-                />
+                <InputGroup>
+                  <Input
+                    type={showConfirmPassword ? "text" : "password"}
+                    borderColor="#b16831"
+                    focusBorderColor="#b16831"
+                    {...register("confirmPassword")}
+                  />
+                  <InputRightElement width="4.5rem">
+                    <Button
+                      h="1.75rem"
+                      size="sm"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      variant="ghost"
+                    >
+                      {showConfirmPassword ? <ViewOffIcon color="#b16831"/> : <ViewIcon color="#b16831" />}
+                    </Button>
+                  </InputRightElement>
+                </InputGroup>
                 {errors.confirmPassword && (
                   <Text color="red.500">{errors.confirmPassword.message}</Text>
                 )}
