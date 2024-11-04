@@ -445,6 +445,36 @@ def create_first_wisher():
 
     return jsonify({"message": "First Wisher created successfully", "role": "wisher", "status": "validated"}), 201
 
+@app.route('/products/pix', methods=['POST'])
+@jwt_required()
+def add_pix_product():
+    user_identity = get_jwt_identity()
+
+    # Verifica se o usuário é um gifter
+    if user_identity["role"] != "gifter":
+        return jsonify({"error": "Unauthorized"}), 403
+
+    data = request.get_json()
+    title = data.get('title')
+
+    # Permite apenas a criação de produtos com o título "Chave PIX"
+    if title != "Chave PIX":
+        return jsonify({"error": "Invalid product title"}), 400
+
+    new_product = Product(
+        title=title,
+        product_link=None,  # Garantir que links personalizados não sejam usados
+        image_link=None,  # Garantir que imagens personalizadas não sejam usadas
+        price="Valor Livre",  # Define um preço padrão
+        gifter_id=user_identity["id"],  # Usa o ID do gifter autenticado
+        status="purchased"  
+    )
+
+    db.session.add(new_product)
+    db.session.commit()
+
+    return jsonify({"message": "Product added successfully"}), 201
+
 
 # Inicializa o banco de dados
 with app.app_context():
