@@ -70,7 +70,11 @@ const GiftListPage = () => {
 
       const data = await response.json();
       const filteredItems = data.filter((item: any) => !(item.title === "Chave PIX" && item.status === "purchased"));
-
+      const sortedItems = filteredItems.sort((a: any, b: any) => {
+        if (a.status === "available" && b.status !== "available") return -1;
+        if (a.status !== "available" && b.status === "available") return 1;
+        return 0;
+      });
       const fixedPixItem: GiftItem = {
         id: 0,
         title: "Chave Pix",
@@ -79,7 +83,7 @@ const GiftListPage = () => {
         qrCodeImage: "/qrcode.png",
       };
 
-      const itemsWithQrCode = filteredItems.map((item: any) => ({
+      const itemsWithQrCode = sortedItems.map((item: any) => ({
         ...item,
         image: item.image_link || "",
         qrCodeImage: "/qrcode.png",
