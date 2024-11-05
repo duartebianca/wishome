@@ -51,6 +51,7 @@ const GiftCard = ({ item, role, onDelete, onEdit, onUpdateStatus }: GiftCardProp
   const [isPurchasedChecked, setIsPurchasedChecked] = useState(false);
   const [isPixChecked, setIsPixChecked] = useState(false);
   const [trackingCode, setTrackingCode] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(chavePix);
@@ -145,13 +146,16 @@ const GiftCard = ({ item, role, onDelete, onEdit, onUpdateStatus }: GiftCardProp
   };
 
   const handleConfirmPurchase = async () => {
+    setIsLoading(true); // Ativa o estado de carregamento
     if (isPurchasedChecked) {
       if (trackingCode) {
         await handleTrackingCodeSubmit();
       }
       handleStatusUpdate("purchased");
     }
+    setIsLoading(false); // Desativa o estado de carregamento
   };
+  
 
   const handleStatusUpdate = (status: string) => {
     if (item.id) {
@@ -312,6 +316,8 @@ const GiftCard = ({ item, role, onDelete, onEdit, onUpdateStatus }: GiftCardProp
                 onClick={handleConfirmPurchase}
                 fontFamily="'Higuen Elegant Serif', serif"
                 isDisabled={!isPurchasedChecked}
+                isLoading={isLoading} // Adiciona o carregamento
+                loadingText="Confirmando..."
               >
                 Confirmar Compra
               </Button>
