@@ -42,6 +42,8 @@ const SignUpPage = () => {
 
   const toast = useToast();
   const navigate = useNavigate(); // Hook de navegação
+  const [isLoading, setIsLoading] = useState(false);
+
 
   // Atualiza os requisitos conforme a senha é digitada
   const updateRequirements = (password: string) => {
@@ -53,6 +55,7 @@ const SignUpPage = () => {
   };
 
   const onSubmit = async (data: RegisterFormInputs) => {
+    setIsLoading(true); // Ativa o carregamento
     try {
       const response = await fetch("http://localhost:5000/register", {
         method: "POST",
@@ -61,16 +64,15 @@ const SignUpPage = () => {
         },
         body: JSON.stringify(data),
       });
-
+  
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || "Erro ao criar conta");
       }
-
+  
       const result = await response.json();
       console.log(result);
-
-      // Exibe Toast de sucesso
+  
       toast({
         title: "Conta criada com sucesso!",
         description: "Você já pode fazer login.",
@@ -78,14 +80,10 @@ const SignUpPage = () => {
         duration: 5000,
         isClosable: true,
       });
-
-      // Redireciona para a página de login
+  
       navigate("/login");
-
     } catch (error: any) {
       console.error(error);
-
-      // Exibe Toast de erro
       toast({
         title: "Erro ao criar conta",
         description: error.message || "Tente novamente.",
@@ -93,8 +91,11 @@ const SignUpPage = () => {
         duration: 5000,
         isClosable: true,
       });
+    } finally {
+      setIsLoading(false); // Desativa o carregamento
     }
   };
+  
 
   const renderRequirement = (isMet: boolean, label: string) => (
     <HStack>
@@ -304,6 +305,8 @@ const SignUpPage = () => {
                   fontFamily="'Higuen Elegant Serif', serif"
                   _hover={{ bg: "#b16831" }}
                   type="submit"
+                  isLoading={isLoading} // Adiciona o carregamento
+                  loadingText="Criando..."
                 >
                   CRIAR CONTA
                 </Button>
