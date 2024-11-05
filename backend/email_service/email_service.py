@@ -7,21 +7,26 @@ from dotenv import load_dotenv
 class EmailService:
     @staticmethod
     def send_email(to: str, subject: str) -> None:
+        print(to)
         # Obtém as credenciais do e-mail do arquivo .env
         load_dotenv()
         USER_EMAIL = os.getenv("USER_EMAIL")
         USER_PASSWORD = os.getenv("USER_PASSWORD")
-        print(USER_PASSWORD)
-        print(f"{to}")
+
+        # Garante que USER_EMAIL e USER_PASSWORD são strings
+        if isinstance(USER_EMAIL, bytes):
+            USER_EMAIL = USER_EMAIL.decode("utf-8")
+        if isinstance(USER_PASSWORD, bytes):
+            USER_PASSWORD = USER_PASSWORD.decode("utf-8")
+
         SMTP_SERVER = "smtp.gmail.com"
         SMTP_PORT = 587
 
+        # Carrega o conteúdo HTML do e-mail
         current_dir = os.path.dirname(os.path.abspath(__file__))
         email_template_path = os.path.join(current_dir, "email.html")
         with open(email_template_path, "r", encoding="utf-8") as file:
             html_content = file.read()
-            #print(html_content)
-
 
         # Configura a mensagem de e-mail
         msg = MIMEMultipart()
