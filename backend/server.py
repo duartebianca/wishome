@@ -153,6 +153,33 @@ def register():
 
     return jsonify({"message": "User registered successfully", "role": "gifter", "status": "pending"}), 201
 
+# Rota para envio do código de rastreio
+@app.route('/tracking-code', methods=['POST'])
+def send_tracking_code():
+    data = request.get_json()
+    tracking_code = data.get('tracking_code')
+
+    if not tracking_code:
+        return jsonify({"error": "Tracking code is required"}), 400
+
+    try:
+        wishers = User.query.filter_by(role='wisher').all()  # Busca todos os wishers
+        for wisher in wishers:
+            # Certifique-se de que o endereço de e-mail e o assunto são strings
+            email_to = wisher.email if isinstance(wisher.email, str) else wisher.email.decode("utf-8")
+            subject = f"Novo Código de Rastreio!"
+            print(f"Enviando e-mail para: {email_to}")
+            # Envia o e-mail com o código de rastreio
+            EmailService.send_email(
+                to=email_to,
+                subject=subject,
+                template="tracking-code.html",
+                context={"tracking_code": tracking_code}
+            )
+        return jsonify({"message": "E-mail com o código de rastreio enviado com sucesso"}), 200
+    except Exception as e:
+        print(f"Erro ao enviar o e-mail de rastreio: {e}")
+        return jsonify({"error": "Erro ao enviar o e-mail"}), 500
 
 # Rota de criação de Wisher (restrita a usuários Wisher)
 @app.route('/create-wisher', methods=['POST'])
