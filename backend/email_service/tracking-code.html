@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Código de Rastreio</title>
+    <style>
+        body {
+            font-family: Lato, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 100%;
+        }
+        .header {
+            background-color: #f3ebe2;
+            text-align: center;
+            padding: 20px 0;
+        }
+        .header img {
+            width: 120px;
+        }
+        .title {
+            font-family: 'Higuen Elegant Serif', serif;
+            font-size: 24px;
+            color: #6d1716;
+            margin-top: 20px;
+        }
+        .subtitle {
+            font-size: 16px;
+            color: #000;
+            font-weight: 400;
+            margin-top: 10px;
+        }
+        .tracking-box {
+            font-size: 18px;
+            font-weight: 700;
+            color: #6d1716;
+            background-color: #f3ebe2;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="https://i.imgur.com/1efhxco.png" alt="Wishome Logo">
+        </div>
+        <div class="title">Seu Código de Rastreio</div>
+        <div class="subtitle">Aqui está o código para acompanhar seu presente:</div>
+        <div class="tracking-box">{{tracking_code}}</div>
+    </div>
+</body>
+</html>
