@@ -144,6 +144,7 @@ def register():
             # Certifique-se de que o endereço de e-mail e o assunto são strings
             email_to = wisher.email if isinstance(wisher.email, str) else wisher.email.decode("utf-8")
             subject = f"Valide o novo usuário! - {name}"
+            print(f"Enviando e-mail para: {email_to}")
             EmailService.send_email(
                 to=email_to,
                 subject=subject
