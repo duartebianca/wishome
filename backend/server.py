@@ -119,7 +119,6 @@ def add_address():
         return jsonify({"error": f"Failed to add address: {str(e)}"}), 500
 
 
-
 # Rota de cadastro para 'Gifter'
 @app.route('/register', methods=['POST'])
 def register():
@@ -138,13 +137,22 @@ def register():
     db.session.add(new_user)
     db.session.commit()
 
-    # Envia o e-mail de boas-vindas
+    # Envia o e-mail de boas-vindas para todos os wishers
     try:
-        EmailService.send_email(to="biancaduarte1914@gmail.com", subject=f"Valide o novo usuário! - {name}")
+        wishers = User.query.filter_by(role='wisher').all()  # Busca todos os wishers
+        for wisher in wishers:
+            # Certifique-se de que o endereço de e-mail e o assunto são strings
+            email_to = wisher.email if isinstance(wisher.email, str) else wisher.email.decode("utf-8")
+            subject = f"Valide o novo usuário! - {name}"
+            EmailService.send_email(
+                to=email_to,
+                subject=subject
+            )
     except Exception as e:
         print(f"Erro ao enviar o e-mail: {e}")
 
     return jsonify({"message": "User registered successfully", "role": "gifter", "status": "pending"}), 201
+
 
 # Rota de criação de Wisher (restrita a usuários Wisher)
 @app.route('/create-wisher', methods=['POST'])
