@@ -17,6 +17,7 @@ import {
   ModalFooter,
   useToast,
   Checkbox,
+  Input,
 } from "@chakra-ui/react";
 import { LinkIcon } from "@chakra-ui/icons";
 import { MdPix, MdDeleteForever } from "react-icons/md";
@@ -42,17 +43,14 @@ interface GiftCardProps {
 }
 
 const GiftCard = ({ item, role, onDelete, onEdit, onUpdateStatus }: GiftCardProps) => {
-  const { isOpen, onOpen, onClose } = useDisclosure(); // Modal para o botão de "PIX" dos outros cards
-  const {
-    isOpen: isPixKeyOpen,
-    onOpen: onPixKeyOpen,
-    onClose: onPixKeyClose,
-  } = useDisclosure(); // Modal específico de "Mostrar chave"
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen: isPixKeyOpen, onOpen: onPixKeyOpen, onClose: onPixKeyClose } = useDisclosure();
   const { isOpen: isConfirmOpen, onOpen: onConfirmOpen, onClose: onConfirmClose } = useDisclosure();
   const toast = useToast();
   const chavePix = "81995115978";
   const [isPurchasedChecked, setIsPurchasedChecked] = useState(false);
   const [isPixChecked, setIsPixChecked] = useState(false);
+  const [trackingCode, setTrackingCode] = useState("");
 
   const handleCopy = () => {
     navigator.clipboard.writeText(chavePix);
@@ -72,10 +70,10 @@ const GiftCard = ({ item, role, onDelete, onEdit, onUpdateStatus }: GiftCardProp
   const handleEdit = () => {
     onEdit(item);
   };
+
   const handlePixConfirmation = async () => {
     try {
       const token = localStorage.getItem("token");
-      console.log(token);
       const response = await fetch("http://localhost:5000/products/pix", {
         method: "POST",
         headers: {
@@ -84,7 +82,7 @@ const GiftCard = ({ item, role, onDelete, onEdit, onUpdateStatus }: GiftCardProp
         },
         body: JSON.stringify({
           title: "Chave PIX",
-          gifter_id: localStorage.getItem("user_id"), // Substitua pelo método correto de obter o ID do usuário
+          gifter_id: localStorage.getItem("user_id"),
         }),
       });
 
@@ -112,6 +110,48 @@ const GiftCard = ({ item, role, onDelete, onEdit, onUpdateStatus }: GiftCardProp
     }
   };
 
+  const handleTrackingCodeSubmit = async () => {
+    if (trackingCode) {
+      try {
+        const response = await fetch("http://localhost:5000/tracking-code", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ tracking_code: trackingCode }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Falha ao enviar o código de rastreio");
+        }
+
+        toast({
+          title: "Código de rastreio enviado",
+          description: "O código de rastreio foi enviado por e-mail.",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+      } catch (error) {
+        toast({
+          title: "Erro",
+          description: "Não foi possível enviar o código de rastreio.",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      }
+    }
+  };
+
+  const handleConfirmPurchase = async () => {
+    if (isPurchasedChecked) {
+      if (trackingCode) {
+        await handleTrackingCodeSubmit();
+      }
+      handleStatusUpdate("purchased");
+    }
+  };
 
   const handleStatusUpdate = (status: string) => {
     if (item.id) {
@@ -162,14 +202,7 @@ const GiftCard = ({ item, role, onDelete, onEdit, onUpdateStatus }: GiftCardProp
         </Flex>
       )}
 
-      <Image
-        src={item.image}
-        alt={item.title}
-        borderRadius="lg"
-        mb="1rem"
-        height="200px"
-        objectFit="cover"
-      />
+      <Image src={item.image} alt={item.title} borderRadius="lg" mb="1rem" height="200px" objectFit="cover" />
 
       <Text fontFamily="'Higuen Elegant Serif', serif" fontSize="xl" color="#6d1716" mb="0.5rem">
         {item.title}
@@ -187,7 +220,6 @@ const GiftCard = ({ item, role, onDelete, onEdit, onUpdateStatus }: GiftCardProp
         </Tag>
       </Flex>
 
-      {/* Botões (com Símbolos e Texto) */}
       {item.status !== "purchased" && (
         <Flex justify="space-around" mt="1rem" gap="0.3rem">
           {item.title === "Chave Pix" ? (
@@ -237,8 +269,59 @@ const GiftCard = ({ item, role, onDelete, onEdit, onUpdateStatus }: GiftCardProp
         </Flex>
       )}
 
-      {/* Modal para mostrar a chave PIX */}
-      <Modal isOpen={isPixKeyOpen} onClose={onPixKeyClose} closeOnOverlayClick={false} isCentered>
+      <Modal isOpen={isConfirmOpen} onClose={onConfirmClose} closeOnOverlayClick={false}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader fontFamily="'Higuen Elegant Serif', serif">Confirmação de Redirecionamento</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Text fontFamily="'Lato', sans-serif">
+              Você está prestes a sair de nossa lista! Não esqueça de voltar aqui e marcar se comprou ou não o produto quando acabar.
+            </Text>
+            <Checkbox
+              mt={4}
+              fontFamily="'Higuen Elegant Serif', serif"
+              colorScheme="green"
+              isChecked={isPurchasedChecked}
+              onChange={(e) => setIsPurchasedChecked(e.target.checked)}
+            >
+              Sim, comprei!
+            </Checkbox>
+            <Input
+              placeholder="Código de rastreio (se houver)"
+              mt={4}
+              value={trackingCode}
+              onChange={(e) => setTrackingCode(e.target.value)}
+              fontFamily="'Lato', sans-serif"
+            />
+          </ModalBody>
+          <ModalFooter>
+            <Flex width="100%" direction="column" gap="0.5rem">
+              <Button
+                as="a"
+                href={item.product_link}
+                target="_blank"
+                rel="noopener noreferrer"
+                colorScheme="blue"
+                fontFamily="'Higuen Elegant Serif', serif"
+              >
+                Continuar para Loja
+              </Button>
+              <Button
+                colorScheme="green"
+                onClick={handleConfirmPurchase}
+                fontFamily="'Higuen Elegant Serif', serif"
+                isDisabled={!isPurchasedChecked}
+              >
+                Confirmar Compra
+              </Button>
+            </Flex>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+       {/* Modal para mostrar a chave PIX */}
+       <Modal isOpen={isPixKeyOpen} onClose={onPixKeyClose} closeOnOverlayClick={false} isCentered>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader fontFamily="'Higuen Elegant Serif', serif">Chave PIX</ModalHeader>
@@ -284,53 +367,8 @@ const GiftCard = ({ item, role, onDelete, onEdit, onUpdateStatus }: GiftCardProp
         </ModalContent>
       </Modal>
 
-      {/* Modal de confirmação para redirecionamento à loja */}
-      <Modal isOpen={isConfirmOpen} onClose={onConfirmClose} closeOnOverlayClick={false}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader fontFamily="'Higuen Elegant Serif', serif">Confirmação de Redirecionamento</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <Text fontFamily="'Lato', sans-serif">
-              Você está prestes a sair de nossa lista! Não esqueça de voltar aqui e marcar se comprou ou não o produto quando acabar.
-            </Text>
-            <Checkbox
-              mt={4}
-              fontFamily="'Higuen Elegant Serif', serif"
-              colorScheme="green"
-              isChecked={isPurchasedChecked}
-              onChange={(e) => setIsPurchasedChecked(e.target.checked)}
-            >
-              Sim, comprei!
-            </Checkbox>
-          </ModalBody>
-          <ModalFooter>
-            <Flex width="100%" direction="column" gap="0.5rem">
-              <Button
-                as="a"
-                href={item.product_link}
-                target="_blank"
-                rel="noopener noreferrer"
-                colorScheme="blue"
-                fontFamily="'Higuen Elegant Serif', serif"
-              >
-                Continuar para Loja
-              </Button>
-              <Button
-                colorScheme="green"
-                onClick={() => isPurchasedChecked && handleStatusUpdate("purchased")}
-                fontFamily="'Higuen Elegant Serif', serif"
-                isDisabled={!isPurchasedChecked}
-              >
-                Confirmar Compra
-              </Button>
-            </Flex>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-
-      {/* Modal para exibir o QR Code e opção de compra para os outros cards */}
-      <Modal isOpen={isOpen} onClose={onClose} closeOnOverlayClick={false} isCentered>
+       {/* Modal para exibir o QR Code e opção de compra para os outros cards */}
+       <Modal isOpen={isOpen} onClose={onClose} closeOnOverlayClick={false} isCentered>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader fontFamily="'Higuen Elegant Serif', serif">Detalhes do PIX</ModalHeader>
