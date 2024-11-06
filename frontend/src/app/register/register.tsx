@@ -57,7 +57,7 @@ const SignUpPage = () => {
   const onSubmit = async (data: RegisterFormInputs) => {
     setIsLoading(true); // Ativa o carregamento
     try {
-      const response = await fetch("http://localhost:5000/register", {
+      const response = await fetch("https://wishome.onrender.com/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

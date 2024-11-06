@@ -38,7 +38,7 @@ const ValidateUsersPage = () => {
     const fetchUsers = async () => {
       const token = localStorage.getItem("token");
 
-      const response = await fetch("http://localhost:5000/pending-users", {
+      const response = await fetch("https://wishome.onrender.com/pending-users", {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -72,7 +72,7 @@ const ValidateUsersPage = () => {
     const token = localStorage.getItem("token");
   
     // Define URL e método conforme o tipo de ação
-    const url = `http://localhost:5000/users/${selectedUser.id}/${
+    const url = `https://wishome.onrender.com/users/${selectedUser.id}/${
       modalType === "accept" ? "validate" : "reject"
     }`;
     const method = modalType === "accept" ? "PATCH" : "DELETE";  // Usa DELETE para rejeitar

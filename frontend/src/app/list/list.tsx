@@ -57,7 +57,7 @@ const GiftListPage = () => {
     try {
       const token = localStorage.getItem("token");
 
-      const response = await fetch("http://localhost:5000/products", {
+      const response = await fetch("https://wishome.onrender.com/products", {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -98,7 +98,7 @@ const GiftListPage = () => {
   const fetchAddress = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:5000/address", {
+      const response = await fetch("https://wishome.onrender.com/address", {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!response.ok) {
@@ -155,7 +155,7 @@ const GiftListPage = () => {
   const handleDelete = async (id: number) => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`http://localhost:5000/products/${id}`, {
+      const response = await fetch(`https://wishome.onrender.com/products/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -196,7 +196,7 @@ const GiftListPage = () => {
     try {
       const token = localStorage.getItem("token");
 
-      const response = await fetch(`http://localhost:5000/products/${id}/status`, {
+      const response = await fetch(`https://wishome.onrender.com/products/${id}/status`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",

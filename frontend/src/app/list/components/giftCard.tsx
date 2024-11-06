@@ -75,7 +75,7 @@ const GiftCard = ({ item, role, onDelete, onEdit, onUpdateStatus }: GiftCardProp
   const handlePixConfirmation = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:5000/products/pix", {
+      const response = await fetch("https://wishome.onrender.com/products/pix", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -114,7 +114,7 @@ const GiftCard = ({ item, role, onDelete, onEdit, onUpdateStatus }: GiftCardProp
   const handleTrackingCodeSubmit = async () => {
     if (trackingCode) {
       try {
-        const response = await fetch("http://localhost:5000/tracking-code", {
+        const response = await fetch("https://wishome.onrender.com/tracking-code", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

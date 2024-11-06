@@ -43,7 +43,7 @@ const AddProductPage = () => {
 
     // Envia os dados para o backend
     try {
-      const response = await fetch("http://localhost:5000/products", {
+      const response = await fetch("https://wishome.onrender.com/products", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

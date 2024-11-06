@@ -36,7 +36,7 @@ const ListStatusPage = () => {
     try {
       const token = localStorage.getItem("token");
 
-      const response = await fetch("http://localhost:5000/products", {
+      const response = await fetch("https://wishome.onrender.com/products", {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -53,7 +53,7 @@ const ListStatusPage = () => {
       const purchasedItems = data.filter((item: Product) => item.status === "purchased"&& item.gifter_id);
       setProducts(data);
       try {
-        const new_response = await fetch("http://localhost:5000/gifters", {
+        const new_response = await fetch("https://wishome.onrender.com/gifters", {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
