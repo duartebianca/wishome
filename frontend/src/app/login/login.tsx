@@ -27,6 +27,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ setIsAuthenticated }) => {
   const navigate = useNavigate();
   const toast = useToast();
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const {
     register,
@@ -37,6 +38,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ setIsAuthenticated }) => {
   });
 
   const onSubmit = async (data: LoginFormInputs) => {
+    setIsLoading(true);
     try {
       const response = await fetch("https://wishome.onrender.com/login", {
         method: "POST",
@@ -79,6 +81,8 @@ const LoginPage: React.FC<LoginPageProps> = ({ setIsAuthenticated }) => {
         duration: 5000,
         isClosable: true,
       });
+    } finally {
+      setIsLoading(false); // Desativa o carregamento
     }
   };
 
@@ -162,6 +166,8 @@ const LoginPage: React.FC<LoginPageProps> = ({ setIsAuthenticated }) => {
                 color="white"
                 fontFamily="'Higuen Elegant Serif', serif"
                 _hover={{ bg: "#b16831" }}
+                isLoading={isLoading} // Adiciona o carregamento
+                loadingText="Entrando..."
               >
                 Entrar
               </Button>
