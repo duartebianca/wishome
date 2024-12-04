@@ -51,7 +51,7 @@ const HomePage = () => {
           >
             Agradecemos o seu interesse em nos presentear! Para sua comodidade,
             vamos pedir que crie uma conta rapidinho! Só vamos precisar do seu
-            nome, email, telefone e que você escolha uma senha ;)
+            nome, email e telefone ;)
           </Text>
           <Text
             fontSize="xl"
