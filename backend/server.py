@@ -120,7 +120,7 @@ def add_address():
 
 
 # Rota de cadastro para 'Gifter'
-app.route('/register', methods=['POST'])
+@app.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
     name = data.get('name')
