@@ -21,16 +21,15 @@ db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
 
-# Modelo do usuário com o campo 'role' para diferenciar 'gifter' e 'wisher'
+# Modified User model without password
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(150), nullable=False)
     email = db.Column(db.String(150), unique=True, nullable=False)
     phone = db.Column(db.String(15), nullable=False)
-    password = db.Column(db.String(150), nullable=False)
     role = db.Column(db.String(50), nullable=False, default='gifter')
-    status = db.Column(db.String(50), nullable=False, default='pending')  # 'pending', 'validated', 'rejected'
-
+    status = db.Column(db.String(50), nullable=False, default='pending')
+    
 # Modelo de Produto
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -121,28 +120,25 @@ def add_address():
 
 
 # Rota de cadastro para 'Gifter'
-@app.route('/register', methods=['POST'])
+app.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
     name = data.get('name')
     email = data.get('email')
     phone = data.get('phone')
-    password = data.get('password')
 
     if User.query.filter_by(email=email).first():
         return jsonify({"error": "Email already exists"}), 400
 
-    hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-    new_user = User(name=name, email=email, phone=phone, password=hashed_password, role='gifter', status='pending')
+    new_user = User(name=name, email=email, phone=phone, role='gifter', status='pending')
 
     db.session.add(new_user)
     db.session.commit()
 
-    # Envia o e-mail de boas-vindas para todos os wishers
+    # Send welcome email to wishers
     try:
-        wishers = User.query.filter_by(role='wisher').all()  # Busca todos os wishers
+        wishers = User.query.filter_by(role='wisher').all()
         for wisher in wishers:
-            # Certifique-se de que o endereço de e-mail e o assunto são strings
             email_to = wisher.email if isinstance(wisher.email, str) else wisher.email.decode("utf-8")
             subject = f"Valide o novo usuário! - {name}"
             print(f"Enviando e-mail para: {email_to}")
@@ -155,6 +151,22 @@ def register():
 
     return jsonify({"message": "User registered successfully", "role": "gifter", "status": "pending"}), 201
 
+# Modified login route without password
+@app.route('/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    email = data.get('email')
+
+    user = User.query.filter_by(email=email).first()
+
+    if user:
+        if user.status == "rejected":
+            return jsonify({"error": "Account rejected"}), 403
+        access_token = create_access_token(identity={"id": user.id, "role": user.role, "status": user.status})
+        return jsonify({"token": access_token, "role": user.role, "status": user.status}), 200
+    else:
+        return jsonify({"error": "Invalid credentials"}), 401
+    
 # Rota para envio do código de rastreio
 @app.route('/tracking-code', methods=['POST'])
 def send_tracking_code():
@@ -183,7 +195,7 @@ def send_tracking_code():
         print(f"Erro ao enviar o e-mail de rastreio: {e}")
         return jsonify({"error": "Erro ao enviar o e-mail"}), 500
 
-# Rota de criação de Wisher (restrita a usuários Wisher)
+# Modified create-wisher route without password
 @app.route('/create-wisher', methods=['POST'])
 @jwt_required()
 def create_wisher():
@@ -195,35 +207,34 @@ def create_wisher():
     name = data.get('name')
     email = data.get('email')
     phone = data.get('phone')
-    password = data.get('password')
 
     if User.query.filter_by(email=email).first():
         return jsonify({"error": "Email already exists"}), 400
 
-    hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-    new_wisher = User(name=name, email=email, phone=phone, password=hashed_password, role='wisher', status='validated')
+    new_wisher = User(name=name, email=email, phone=phone, role='wisher', status='validated')
 
     db.session.add(new_wisher)
     db.session.commit()
 
     return jsonify({"message": "Wisher created successfully", "role": "wisher", "status": "validated"}), 201
 
-# Rota de login com inclusão do 'role' no token
-@app.route('/login', methods=['POST'])
-def login():
+# Modified create-first-wisher route without password
+@app.route('/create-first-wisher', methods=['POST'])
+def create_first_wisher():
+    if User.query.filter_by(role='wisher').first():
+        return jsonify({"error": "A Wisher already exists"}), 400
+
     data = request.get_json()
+    name = data.get('name')
     email = data.get('email')
-    password = data.get('password')
+    phone = data.get('phone')
 
-    user = User.query.filter_by(email=email).first()
+    new_wisher = User(name=name, email=email, phone=phone, role='wisher', status='validated')
 
-    if user and bcrypt.check_password_hash(user.password, password):
-        if user.status == "rejected":
-            return jsonify({"error": "Account rejected"}), 403
-        access_token = create_access_token(identity={"id": user.id, "role": user.role, "status": user.status})
-        return jsonify({"token": access_token, "role": user.role, "status": user.status}), 200
-    else:
-        return jsonify({"error": "Invalid credentials"}), 401
+    db.session.add(new_wisher)
+    db.session.commit()
+
+    return jsonify({"message": "First Wisher created successfully", "role": "wisher", "status": "validated"}), 201
 
 # Rota de verificação de token para checar o tipo de usuário
 @app.route('/verify', methods=['GET'])
@@ -461,26 +472,6 @@ def delete_wisher(wisher_id):
     db.session.delete(wisher)
     db.session.commit()
     return jsonify({"message": "Wisher deleted successfully"}), 200
-
-# Rota para criar o primeiro Wisher
-@app.route('/create-first-wisher', methods=['POST'])
-def create_first_wisher():
-    if User.query.filter_by(role='wisher').first():
-        return jsonify({"error": "A Wisher already exists"}), 400
-
-    data = request.get_json()
-    name = data.get('name')
-    email = data.get('email')
-    phone = data.get('phone')
-    password = data.get('password')
-
-    hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-    new_wisher = User(name=name, email=email, phone=phone, password=hashed_password, role='wisher', status='validated')
-
-    db.session.add(new_wisher)
-    db.session.commit()
-
-    return jsonify({"message": "First Wisher created successfully", "role": "wisher", "status": "validated"}), 201
 
 @app.route('/products/pix', methods=['POST'])
 @jwt_required()
