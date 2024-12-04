@@ -39,7 +39,7 @@ const ValidateUsersPage = () => {
     const fetchUsers = async () => {
       const token = localStorage.getItem("token");
 
-      const response = await fetch(`${BASE_URL}/peding-users`, {
+      const response = await fetch(`${BASE_URL}/pending-users`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
