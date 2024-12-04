@@ -23,6 +23,7 @@ import { LinkIcon } from "@chakra-ui/icons";
 import { MdPix, MdDeleteForever } from "react-icons/md";
 import { HiPencilAlt } from "react-icons/hi";
 import { useState } from "react";
+import { BASE_URL } from "../../../utils/apiRequests";
 
 interface Item {
   id?: number;
@@ -75,7 +76,7 @@ const GiftCard = ({ item, role, onDelete, onEdit, onUpdateStatus }: GiftCardProp
   const handlePixConfirmation = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("https://wishome.onrender.com/products/pix", {
+      const response = await fetch(`${BASE_URL}/products/pix`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -114,7 +115,7 @@ const GiftCard = ({ item, role, onDelete, onEdit, onUpdateStatus }: GiftCardProp
   const handleTrackingCodeSubmit = async () => {
     if (trackingCode) {
       try {
-        const response = await fetch("https://wishome.onrender.com/tracking-code", {
+        const response = await fetch(`${BASE_URL}/tracking-code`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

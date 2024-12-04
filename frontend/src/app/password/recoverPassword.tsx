@@ -52,7 +52,7 @@ const PasswordRecoveryPage = () => {
             textAlign="center"
             mb="1.5rem"
           >
-            Recuperação de Senha
+            Falar com o Suporte
           </Text>
 
           {/* Formulário */}

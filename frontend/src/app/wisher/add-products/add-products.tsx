@@ -12,6 +12,7 @@ import {
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { BASE_URL } from "../../../utils/apiRequests";
 
 const AddProductPage = () => {
   const navigate = useNavigate();
@@ -43,7 +44,7 @@ const AddProductPage = () => {
 
     // Envia os dados para o backend
     try {
-      const response = await fetch("https://wishome.onrender.com/products", {
+      const response = await fetch(`${BASE_URL}/products`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

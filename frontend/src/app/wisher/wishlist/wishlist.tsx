@@ -13,6 +13,7 @@ import {
   Tag,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
+import { BASE_URL } from "../../../utils/apiRequests";
 
 interface Product {
   id: number;
@@ -36,7 +37,7 @@ const ListStatusPage = () => {
     try {
       const token = localStorage.getItem("token");
 
-      const response = await fetch("https://wishome.onrender.com/products", {
+      const response = await fetch(`${BASE_URL}/products`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -53,7 +54,7 @@ const ListStatusPage = () => {
       const purchasedItems = data.filter((item: Product) => item.status === "purchased"&& item.gifter_id);
       setProducts(data);
       try {
-        const new_response = await fetch("https://wishome.onrender.com/gifters", {
+        const new_response = await fetch(`${BASE_URL}/gifters`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,

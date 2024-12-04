@@ -18,6 +18,7 @@ import {
 } from "@chakra-ui/react";
 import { CheckIcon, CloseIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
+import { BASE_URL } from "../../../utils/apiRequests";
 
 interface User {
   id: number;
@@ -38,7 +39,7 @@ const ValidateUsersPage = () => {
     const fetchUsers = async () => {
       const token = localStorage.getItem("token");
 
-      const response = await fetch("https://wishome.onrender.com/pending-users", {
+      const response = await fetch(`${BASE_URL}/peding-users`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -72,7 +73,7 @@ const ValidateUsersPage = () => {
     const token = localStorage.getItem("token");
   
     // Define URL e método conforme o tipo de ação
-    const url = `https://wishome.onrender.com/users/${selectedUser.id}/${
+    const url = `${BASE_URL}/users/${selectedUser.id}/${
       modalType === "accept" ? "validate" : "reject"
     }`;
     const method = modalType === "accept" ? "PATCH" : "DELETE";  // Usa DELETE para rejeitar

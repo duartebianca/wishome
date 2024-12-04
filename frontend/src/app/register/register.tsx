@@ -8,18 +8,13 @@ import {
   FormControl,
   FormLabel,
   Input,
-  InputGroup,
-  InputRightElement,
   Text,
   SimpleGrid,
-  List,
-  ListItem,
-  HStack,
   useToast,
 } from "@chakra-ui/react";
 import { RegisterFormInputs, RegisterSchema } from "./forms/register-form";
-import { CheckCircleIcon, SmallCloseIcon, ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom"; // Importando o hook de navegação
+import { BASE_URL } from "../../utils/apiRequests";
 
 const SignUpPage = () => {
   const {
@@ -31,33 +26,14 @@ const SignUpPage = () => {
     mode: "onChange",
   });
 
-  const [requirements, setRequirements] = useState({
-    minLength: false,
-    hasNumber: false,
-    hasSpecialChar: false,
-  });
-
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
   const toast = useToast();
-  const navigate = useNavigate(); // Hook de navegação
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
 
-
-  // Atualiza os requisitos conforme a senha é digitada
-  const updateRequirements = (password: string) => {
-    setRequirements({
-      minLength: password.length >= 6,
-      hasNumber: /[0-9]/.test(password),
-      hasSpecialChar: /[!@#$%^&*(),.?":{}|<>]/.test(password),
-    });
-  };
-
   const onSubmit = async (data: RegisterFormInputs) => {
-    setIsLoading(true); // Ativa o carregamento
+    setIsLoading(true);
     try {
-      const response = await fetch("https://wishome.onrender.com/register", {
+      const response = await fetch(`${BASE_URL}/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -92,21 +68,9 @@ const SignUpPage = () => {
         isClosable: true,
       });
     } finally {
-      setIsLoading(false); // Desativa o carregamento
+      setIsLoading(false);
     }
   };
-  
-
-  const renderRequirement = (isMet: boolean, label: string) => (
-    <HStack>
-      {isMet ? (
-        <CheckCircleIcon color="green.500" />
-      ) : (
-        <SmallCloseIcon color="red.500" />
-      )}
-      <Text>{label}</Text>
-    </HStack>
-  );
 
   return (
     <Box
@@ -142,154 +106,65 @@ const SignUpPage = () => {
 
           {/* Formulário */}
           <form onSubmit={handleSubmit(onSubmit)}>
-            <SimpleGrid columns={2} spacing={4}>
-              <FormControl isInvalid={!!errors.name} gridColumn="span 2">
-                <FormLabel
-                  color="#b16831"
-                  fontFamily="'Higuen Elegant Serif', serif"
-                >
-                  Nome e sobrenome
-                </FormLabel>
-                <Input
-                  type="text"
-                  borderColor="#b16831"
-                  focusBorderColor="#b16831"
-                  {...register("name")}
-                />
-                {errors.name && (
-                  <Text color="red.500">{errors.name.message}</Text>
-                )}
-              </FormControl>
+          <SimpleGrid columns={1} spacing={4}>
+          <FormControl isInvalid={!!errors.name}>
+            <FormLabel
+              color="#b16831"
+              fontFamily="'Higuen Elegant Serif', serif"
+            >
+              Nome e sobrenome
+            </FormLabel>
+            <Input
+              type="text"
+              borderColor="#b16831"
+              focusBorderColor="#b16831"
+              {...register("name")}
+            />
+            {errors.name && (
+              <Text color="red.500">{errors.name.message}</Text>
+            )}
+          </FormControl>
 
-              <FormControl isInvalid={!!errors.email}>
-                <FormLabel
-                  color="#b16831"
-                  fontFamily="'Higuen Elegant Serif', serif"
-                >
-                  Email
-                </FormLabel>
-                <Input
-                  type="email"
-                  borderColor="#b16831"
-                  focusBorderColor="#b16831"
-                  {...register("email")}
-                />
-                {errors.email && (
-                  <Text color="red.500">{errors.email.message}</Text>
-                )}
-              </FormControl>
+          <FormControl isInvalid={!!errors.email}>
+            <FormLabel
+              color="#b16831"
+              fontFamily="'Higuen Elegant Serif', serif"
+            >
+              Email
+            </FormLabel>
+            <Input
+              type="email"
+              borderColor="#b16831"
+              focusBorderColor="#b16831"
+              {...register("email")}
+            />
+            {errors.email && (
+              <Text color="red.500">{errors.email.message}</Text>
+            )}
+          </FormControl>
 
-              <FormControl isInvalid={!!errors.phone}>
-                <FormLabel
-                  color="#b16831"
-                  fontFamily="'Higuen Elegant Serif', serif"
-                >
-                  Telefone
-                </FormLabel>
-                <Input
-                  type="tel"
-                  borderColor="#b16831"
-                  focusBorderColor="#b16831"
-                  {...register("phone")}
-                />
-                {errors.phone && (
-                  <Text color="red.500">{errors.phone.message}</Text>
-                )}
-              </FormControl>
+          <FormControl isInvalid={!!errors.phone}>
+            <FormLabel
+              color="#b16831"
+              fontFamily="'Higuen Elegant Serif', serif"
+            >
+              Telefone
+            </FormLabel>
+            <Input
+              type="tel"
+              borderColor="#b16831"
+              focusBorderColor="#b16831"
+              {...register("phone")}
+            />
+            {errors.phone && (
+              <Text color="red.500">{errors.phone.message}</Text>
+            )}
+          </FormControl>
+        </SimpleGrid>
 
-              <FormControl isInvalid={!!errors.password}>
-                <FormLabel
-                  color="#b16831"
-                  fontFamily="'Higuen Elegant Serif', serif"
-                >
-                  Senha
-                </FormLabel>
-                <InputGroup>
-                  <Input
-                    type={showPassword ? "text" : "password"}
-                    borderColor="#b16831"
-                    focusBorderColor="#b16831"
-                    {...register("password")}
-                    onChange={(e) => {
-                      updateRequirements(e.target.value);
-                    }}
-                  />
-                  <InputRightElement width="4.5rem">
-                    <Button
-                      h="1.75rem"
-                      size="sm"
-                      onClick={() => setShowPassword(!showPassword)}
-                      variant="ghost"
-                    >
-                      {showPassword ?<ViewOffIcon color="#b16831"/> : <ViewIcon color="#b16831" />}
-                    </Button>
-                  </InputRightElement>
-                </InputGroup>
-                {errors.password && (
-                  <Text color="red.500">{errors.password.message}</Text>
-                )}
-              </FormControl>
 
-              <FormControl isInvalid={!!errors.confirmPassword}>
-                <FormLabel
-                  color="#b16831"
-                  fontFamily="'Higuen Elegant Serif', serif"
-                >
-                  Repetir senha
-                </FormLabel>
-                <InputGroup>
-                  <Input
-                    type={showConfirmPassword ? "text" : "password"}
-                    borderColor="#b16831"
-                    focusBorderColor="#b16831"
-                    {...register("confirmPassword")}
-                  />
-                  <InputRightElement width="4.5rem">
-                    <Button
-                      h="1.75rem"
-                      size="sm"
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      variant="ghost"
-                    >
-                      {showConfirmPassword ? <ViewOffIcon color="#b16831"/> : <ViewIcon color="#b16831" />}
-                    </Button>
-                  </InputRightElement>
-                </InputGroup>
-                {errors.confirmPassword && (
-                  <Text color="red.500">{errors.confirmPassword.message}</Text>
-                )}
-              </FormControl>
-            </SimpleGrid>
 
-            <Flex mt="4" justify="space-between">
-              {/* Requisitos de Senha */}
-              <Box>
-                <Text fontWeight="bold" color="#b16831">
-                  A senha deve conter:
-                </Text>
-                <List spacing={2} mt="2">
-                  <ListItem>
-                    {renderRequirement(
-                      requirements.minLength,
-                      "Pelo menos 6 caracteres"
-                    )}
-                  </ListItem>
-                  <ListItem>
-                    {renderRequirement(
-                      requirements.hasNumber,
-                      "Pelo menos 1 número"
-                    )}
-                  </ListItem>
-                  <ListItem>
-                    {renderRequirement(
-                      requirements.hasSpecialChar,
-                      "Pelo menos 1 caractere especial"
-                    )}
-                  </ListItem>
-                </List>
-              </Box>
-
-              {/* Texto e Botão */}
+            <Flex mt="4" justify="center">
               <Box textAlign="center">
                 <Text
                   mt="1.5rem"
@@ -305,7 +180,7 @@ const SignUpPage = () => {
                   fontFamily="'Higuen Elegant Serif', serif"
                   _hover={{ bg: "#b16831" }}
                   type="submit"
-                  isLoading={isLoading} // Adiciona o carregamento
+                  isLoading={isLoading}
                   loadingText="Criando..."
                 >
                   CRIAR CONTA

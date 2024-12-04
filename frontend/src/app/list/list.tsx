@@ -18,6 +18,7 @@ import {
 import { FaTruck } from "react-icons/fa";
 import GiftCard from "./components/giftCard";
 import EditProductModal from "./components/editProductModal";
+import { BASE_URL } from "../../utils/apiRequests";
 
 interface GiftItem {
   id: number;
@@ -57,7 +58,7 @@ const GiftListPage = () => {
     try {
       const token = localStorage.getItem("token");
 
-      const response = await fetch("https://wishome.onrender.com/products", {
+      const response = await fetch(`${BASE_URL}/products`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -98,7 +99,7 @@ const GiftListPage = () => {
   const fetchAddress = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("https://wishome.onrender.com/address", {
+      const response = await fetch(`${BASE_URL}/address`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!response.ok) {
@@ -155,7 +156,7 @@ const GiftListPage = () => {
   const handleDelete = async (id: number) => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`https://wishome.onrender.com/products/${id}`, {
+      const response = await fetch(`${BASE_URL}/products/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -196,7 +197,7 @@ const GiftListPage = () => {
     try {
       const token = localStorage.getItem("token");
 
-      const response = await fetch(`https://wishome.onrender.com/products/${id}/status`, {
+      const response = await fetch(`${BASE_URL}/products/${id}/status`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",

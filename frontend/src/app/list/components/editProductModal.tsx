@@ -13,6 +13,7 @@ import {
     useToast,
   } from "@chakra-ui/react";
   import { useState, useEffect } from "react";
+import { BASE_URL } from "../../../utils/apiRequests";
   
   interface EditProductModalProps {
     isOpen: boolean;
@@ -70,7 +71,7 @@ import {
       }
   
       try {
-        const response = await fetch(`https://wishome.onrender.com/products/${item.id}`, {
+        const response = await fetch(`${BASE_URL}/products/${item.id}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",

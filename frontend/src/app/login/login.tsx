@@ -9,15 +9,13 @@ import {
   Link,
   Text,
   FormErrorMessage,
-  InputGroup,
-  InputRightElement,
   useToast,
 } from "@chakra-ui/react";
-import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginFormInputs, LoginSchema } from "./forms/login-form";
+import { BASE_URL } from "../../utils/apiRequests";
 
 interface LoginPageProps {
   setIsAuthenticated: (value: boolean) => void;
@@ -26,7 +24,6 @@ interface LoginPageProps {
 const LoginPage: React.FC<LoginPageProps> = ({ setIsAuthenticated }) => {
   const navigate = useNavigate();
   const toast = useToast();
-  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const {
@@ -40,12 +37,12 @@ const LoginPage: React.FC<LoginPageProps> = ({ setIsAuthenticated }) => {
   const onSubmit = async (data: LoginFormInputs) => {
     setIsLoading(true);
     try {
-      const response = await fetch("https://wishome.onrender.com/login", {
+      const response = await fetch(`${BASE_URL}/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify({ email: data.email }), // Enviando apenas o email
       });
 
       if (!response.ok) {
@@ -118,7 +115,10 @@ const LoginPage: React.FC<LoginPageProps> = ({ setIsAuthenticated }) => {
 
           <form onSubmit={handleSubmit(onSubmit)}>
             <FormControl mb="1rem" isInvalid={!!errors.email}>
-              <FormLabel color="#b16831" fontFamily="'Higuen Elegant Serif', serif">
+              <FormLabel
+                color="#b16831"
+                fontFamily="'Higuen Elegant Serif', serif"
+              >
                 e-mail
               </FormLabel>
               <Input
@@ -130,35 +130,6 @@ const LoginPage: React.FC<LoginPageProps> = ({ setIsAuthenticated }) => {
               <FormErrorMessage>{errors.email?.message}</FormErrorMessage>
             </FormControl>
 
-            <FormControl mb="1rem" isInvalid={!!errors.password}>
-              <FormLabel color="#b16831" fontFamily="'Higuen Elegant Serif', serif">
-                senha
-              </FormLabel>
-              <InputGroup>
-                <Input
-                  type={showPassword ? "text" : "password"}
-                  {...register("password")}
-                  borderColor="#b16831"
-                  focusBorderColor="#b16831"
-                />
-                <InputRightElement width="4.5rem">
-                  <Button
-                    h="1.75rem"
-                    size="sm"
-                    onClick={() => setShowPassword(!showPassword)}
-                    variant="ghost"
-                  >
-                    {showPassword ? (
-                      <ViewOffIcon color="#b16831" />
-                    ) : (
-                      <ViewIcon color="#b16831" />
-                    )}
-                  </Button>
-                </InputRightElement>
-              </InputGroup>
-              <FormErrorMessage>{errors.password?.message}</FormErrorMessage>
-            </FormControl>
-
             <Flex justify="space-between" align="center" mt="1.5rem">
               <Button
                 type="submit"
@@ -166,7 +137,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ setIsAuthenticated }) => {
                 color="white"
                 fontFamily="'Higuen Elegant Serif', serif"
                 _hover={{ bg: "#b16831" }}
-                isLoading={isLoading} // Adiciona o carregamento
+                isLoading={isLoading}
                 loadingText="Entrando..."
               >
                 Entrar
@@ -177,12 +148,17 @@ const LoginPage: React.FC<LoginPageProps> = ({ setIsAuthenticated }) => {
                 fontFamily="'Lato', sans-serif"
                 _hover={{ textDecoration: "underline" }}
               >
-                Esqueci a Senha
+                Ajuda
               </Link>
             </Flex>
           </form>
 
-          <Text mt="2rem" textAlign="center" color="#6d1716" fontFamily="'Lato', sans-serif">
+          <Text
+            mt="2rem"
+            textAlign="center"
+            color="#6d1716"
+            fontFamily="'Lato', sans-serif"
+          >
             Não tem conta?{" "}
             <Link href="/register" color="#b16831" fontWeight="bold">
               Cadastre-se
